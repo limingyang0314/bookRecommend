@@ -36,6 +36,13 @@ public class ReturnFormat {
 		return ret;
 	}
 	
+	/**
+	 * 参数全齐
+	 * @param data
+	 * @param errorCode
+	 * @param message
+	 * @return
+	 */
 	public static Map<String,Object> format(Object data, Integer errorCode, String message){
 		LinkedHashMap<String,Object> ret = new LinkedHashMap<String,Object>();
 		ret.put("error_code", errorCode);

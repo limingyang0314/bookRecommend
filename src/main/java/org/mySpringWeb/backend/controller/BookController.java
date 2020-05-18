@@ -1,7 +1,6 @@
 package org.mySpringWeb.backend.controller;
 
 import org.mySpringWeb.backend.middleware.ReturnFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
