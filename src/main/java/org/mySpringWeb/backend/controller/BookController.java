@@ -1,6 +1,7 @@
 package org.mySpringWeb.backend.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,30 +34,53 @@ public class BookController {
     	return new ArrayList<Book>();
     }
     
+    /*
+     * 根据ISBN获取图书
+     */
     @RequestMapping("/getBookByISBN")
     @ResponseBody
-    public List<Book> getBookByISBN(@RequestParam(value = "ISBN") String ISBN) {
+    public Map<String, Object> getBookByISBN(@RequestParam(value = "ISBN") String ISBN) {
     	String sql = "SELECT * FROM books WHERE ISBN = ?";
     	Object[] objects = new Object[1];
     	objects[0] = ISBN;
     	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
-    	List<Book> res = new ArrayList<Book>();
-    	for(Map<String, Object> m:maps) {
-    		System.out.println(m);
-    	}
-    	return res;
+    	if(maps.size() > 0)
+    		return maps.get(0);
+    	else
+    		return new HashMap<String, Object>();
     }
     
+    /*
+     * 根据一个标签获取图书列表
+     */
     @RequestMapping("/getBooksByAuthorID")
     @ResponseBody
-    public List<Book> getBooksByAuthorID(ModelMap map) {
-    	return new ArrayList<Book>();
+    public List<Map<String, Object>> getBooksByAuthorID(@RequestParam(value = "authorID") String authorID) {
+    	String sql = "SELECT * FROM books WHERE author_ID LIKE '%,?,%' OR author_ID LIKE '?,%' OR author_ID LIKE '%,?' OR author_ID LIKE '?'";
+    	Object[] objects = new Object[4];
+    	objects[0] = authorID;
+    	objects[0] = authorID;
+    	objects[0] = authorID;
+    	objects[0] = authorID;
+    	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
+    	//return maps.get(0);
+    	return maps;
     }
     
+    /*
+     * 根据一个标签获取图书列表
+     */
     @RequestMapping("/getBooksByTagID")
     @ResponseBody
-    public List<Book> getBooksByTagID(ModelMap map) {
-    	return new ArrayList<Book>();
+    public List<Map<String, Object>> getBooksByTagID(@RequestParam(value = "tagID") String tagID) {
+    	String sql = "SELECT * FROM books WHERE tag_IDs LIKE '%,?,%' OR tag_IDs LIKE '?,%' OR tag_IDs LIKE '%,?' OR tag_ID LIKE '?'";
+    	Object[] objects = new Object[4];
+    	objects[0] = tagID;
+    	objects[0] = tagID;
+    	objects[0] = tagID;
+    	objects[0] = tagID;
+    	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
+    	return maps;
     }
     
     
