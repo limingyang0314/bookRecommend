@@ -1,5 +1,10 @@
 package org.mySpringWeb.backend.model;
 
+/**
+ * 密码模型
+ * @author limingyang
+ *
+ */
 public class Password {
 	private String userID;
 	private String password;

@@ -1,5 +1,10 @@
 package org.mySpringWeb.backend.model;
 
+/**
+ * 用户模型
+ * @author limin
+ *
+ */
 public class User {
 	private String userID;
 	private String userName;

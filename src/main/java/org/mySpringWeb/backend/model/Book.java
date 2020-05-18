@@ -1,5 +1,10 @@
 package org.mySpringWeb.backend.model;
 
+/**
+ * 书籍模型
+ * @author limingyang
+ *
+ */
 public class Book {
 	private String bookID;
 	private String ISBN;
