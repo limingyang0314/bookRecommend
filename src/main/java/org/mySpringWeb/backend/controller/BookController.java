@@ -1,5 +1,6 @@
 package org.mySpringWeb.backend.controller;
 
+import org.mySpringWeb.backend.middleware.ReturnFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,10 +53,10 @@ public class BookController {
     			else
     				temp.put("labels",m.get("label_name"));
     		}
-    		return temp;
+    		return ReturnFormat.format(temp);
     	}
     	else
-    		return new HashMap<String, Object>();
+    		return ReturnFormat.format(null,1,"Cannot find data.");
     }
     
     /**
@@ -83,10 +84,10 @@ public class BookController {
     			else
     				temp.put("labels",m.get("label_name"));
     		}
-    		return temp;
+    		return ReturnFormat.format(temp);
     	}
     	else
-    		return new HashMap<String, Object>();
+    		return ReturnFormat.format(null,1,"Cannot find data.");
     }
     
     /**
@@ -96,7 +97,7 @@ public class BookController {
      */
     @RequestMapping("/getBooksByAuthorID")
     @ResponseBody
-    public List<Map<String, Object>> getBooksByAuthorID(@RequestParam(value = "authorID") String authorID) {
+    public Map<String, Object> getBooksByAuthorID(@RequestParam(value = "authorID") String authorID) {
     	String sql = "SELECT * FROM books WHERE author_ID LIKE ? OR author_ID LIKE ? OR author_ID LIKE ? OR author_ID LIKE ?";
     	Object[] objects = new Object[4];
     	objects[0] = "%," + authorID +",%";
@@ -105,7 +106,7 @@ public class BookController {
     	objects[3] = authorID;
     	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
     	//return maps.get(0);
-    	return maps;
+    	return ReturnFormat.format(maps);
     }
     
     /**
@@ -115,7 +116,7 @@ public class BookController {
      */
     @RequestMapping("/getBooksByTagID")
     @ResponseBody
-    public List<Map<String, Object>> getBooksByTagID(@RequestParam(value = "tagID") String tagID) {
+    public Map<String, Object> getBooksByTagID(@RequestParam(value = "tagID") String tagID) {
     	String sql = "SELECT * FROM books WHERE label_IDs LIKE ? OR label_IDs LIKE ? OR label_IDs LIKE ? OR label_IDs LIKE ?";
     	Object[] objects = new Object[4];
     	objects[0] = "%," + tagID +",%";
@@ -123,7 +124,7 @@ public class BookController {
     	objects[2] = "%," + tagID;
     	objects[3] = tagID;
     	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
-    	return maps;
+    	return ReturnFormat.format(maps);
     }
     
     

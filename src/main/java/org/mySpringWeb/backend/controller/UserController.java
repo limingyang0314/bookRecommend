@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.mySpringWeb.backend.middleware.ReturnFormat;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +34,9 @@ public class UserController {
     	objects[0] = userID;
     	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
     	if(maps.size() > 0)
-    		return maps.get(0);
+    		return ReturnFormat.format(maps.get(0));
     	else
-    		return new HashMap<String, Object>();
+    		return ReturnFormat.format(null,1,"Cannot find data.");
     }
 
 }
