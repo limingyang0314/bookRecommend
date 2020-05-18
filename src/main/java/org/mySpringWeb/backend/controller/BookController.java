@@ -27,7 +27,11 @@ public class BookController {
     @Resource
     private JdbcTemplate jdbcTemplate;
     
-
+    /**
+     * 根据图书ID获取图书
+     * @param bookID
+     * @return
+     */
     @RequestMapping("/getBookByBookID/{id}")
     @ResponseBody
     public Map<String, Object> getBookByBookID(@PathVariable("id") String bookID) {
@@ -54,8 +58,10 @@ public class BookController {
     		return new HashMap<String, Object>();
     }
     
-    /*
+    /**
      * 根据ISBN获取图书
+     * @param ISBN
+     * @return
      */
     @GetMapping("/getBookByISBN/{id}")
     @ResponseBody
@@ -83,8 +89,10 @@ public class BookController {
     		return new HashMap<String, Object>();
     }
     
-    /*
+    /**
      * 根据一个作者获取图书列表
+     * @param authorID
+     * @return
      */
     @RequestMapping("/getBooksByAuthorID")
     @ResponseBody
@@ -100,8 +108,10 @@ public class BookController {
     	return maps;
     }
     
-    /*
+    /**
      * 根据一个标签获取图书列表
+     * @param tagID
+     * @return
      */
     @RequestMapping("/getBooksByTagID")
     @ResponseBody
