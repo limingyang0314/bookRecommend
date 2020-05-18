@@ -56,12 +56,12 @@ public class BookController {
     @RequestMapping("/getBooksByAuthorID")
     @ResponseBody
     public List<Map<String, Object>> getBooksByAuthorID(@RequestParam(value = "authorID") String authorID) {
-    	String sql = "SELECT * FROM books WHERE author_ID LIKE '%,?,%' OR author_ID LIKE '?,%' OR author_ID LIKE '%,?' OR author_ID LIKE '?'";
+    	String sql = "SELECT * FROM books WHERE author_ID LIKE ? OR author_ID LIKE ? OR author_ID LIKE ? OR author_ID LIKE ?";
     	Object[] objects = new Object[4];
-    	objects[0] = authorID;
-    	objects[0] = authorID;
-    	objects[0] = authorID;
-    	objects[0] = authorID;
+    	objects[0] = "%," + authorID +",%";
+    	objects[1] = authorID +",%";
+    	objects[2] = "%," + authorID;
+    	objects[3] = authorID;
     	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
     	//return maps.get(0);
     	return maps;
@@ -73,12 +73,12 @@ public class BookController {
     @RequestMapping("/getBooksByTagID")
     @ResponseBody
     public List<Map<String, Object>> getBooksByTagID(@RequestParam(value = "tagID") String tagID) {
-    	String sql = "SELECT * FROM books WHERE tag_IDs LIKE '%,?,%' OR tag_IDs LIKE '?,%' OR tag_IDs LIKE '%,?' OR tag_ID LIKE '?'";
+    	String sql = "SELECT * FROM books WHERE tag_IDs LIKE ? OR tag_IDs LIKE ? OR tag_IDs LIKE ? OR tag_ID LIKE ?";
     	Object[] objects = new Object[4];
-    	objects[0] = tagID;
-    	objects[0] = tagID;
-    	objects[0] = tagID;
-    	objects[0] = tagID;
+    	objects[0] = "%," + tagID +",%";
+    	objects[1] = tagID +",%";
+    	objects[2] = "%," + tagID;
+    	objects[3] = tagID;
     	List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql, objects);
     	return maps;
     }
