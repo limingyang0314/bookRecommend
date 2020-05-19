@@ -5,7 +5,7 @@ package org.mySpringWeb.backend.model;
  * @author limingyang
  *
  */
-public class Author {
+public class Author{
 	private String authorID;
 	private String authorName;
 	private Integer countryID;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController{
 	//redis-server.exe --service-start 
 	//redis-server.exe --service-stop
 	private RedisService redis = new RedisService();
