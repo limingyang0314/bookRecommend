@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    name: bookRecommend
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: book_recommend
+    url: jdbc:mysql://rm-bp14h269ydw6qq5h50o.mysql.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    type: com.alibaba.druid.pool.DruidDataSource
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  jackson:
+    default-property-inclusion: non_null
+
+  redis:
+    host: localhost
+    port: 6379
+    database: 10
+    jedis:
+      pool:
+        max-active: 50
+        min-idle: 20
+
+server:
+  port: 8090
+  tomcat:
+    accept-count: 1000
+    threads:
+      min-spare: 100
+      max: 800
+
+mybatis:
+  mapper-locations: classpath:mapping/*.xml
+
+pagehelper:
+  helperDialect: mysql
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
