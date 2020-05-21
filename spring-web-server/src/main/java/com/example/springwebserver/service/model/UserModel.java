@@ -29,23 +29,4 @@ public class UserModel implements Serializable {
     @NotBlank(message = "password can't be null")
     private String encryptPassword;
 
-	public void setEncryptPassword(String password) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void setUserId(Long userId2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public String getEncryptPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Long getUserId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
