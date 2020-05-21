@@ -19,5 +19,7 @@ public interface BookService {
 
     List<BookModel> listBookByPage(int page, int size);
 
+    public List<BookModel> listBookByAuthorPage(String author, int page, int size);
+
 }
 

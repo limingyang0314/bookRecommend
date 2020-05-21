@@ -54,7 +54,7 @@ public class BookController extends GlobalExceptionHandler {
     @ResponseBody
     public CommonReturnType getBookByAuthorPage(@RequestParam(name = "page") int page,
                                                 @RequestParam(name = "size") int size, @PathVariable String author_ID) throws BusinessException {
-        return CommonReturnType.create(bookService.listBookByPage(page, size));
+        return CommonReturnType.create(bookService.listBookByAuthorPage(author_ID, page, size));
 
     }
 

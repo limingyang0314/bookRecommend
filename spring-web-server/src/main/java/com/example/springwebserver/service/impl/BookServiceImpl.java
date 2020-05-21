@@ -46,11 +46,20 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookModel getBookByIdInCache(Long book) {
-        if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + bookModel.getbookId()) < 0){
+        if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + Long.toString(book)) < 0){
             //未缓存或已过期
             return getBookById(book);
         }
         return (BookModel)redisTemplate.opsForValue().get("bookID:" + book);
+    }
+
+    @Override
+    public List<BookModel> listBookByAuthorPage(String authorID, int page, int size){
+        PageHelper.startPage(page, size);
+        Page<BookDO> bookPage = bookDOMapper.listBookByAuthorPage(authorID);
+        List<BookDO> bookList = bookPage.getResult();
+
+        return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
     }
 
     @Override
@@ -99,8 +108,8 @@ public class BookServiceImpl implements BookService {
                 sellerList.add(seller);
             }
             bookModel.setSellerlist(sellerList);
-            if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + bookModel.getbookId()) < 0)
-                redisTemplate.opsForValue().set("bookID:" + bookModel.getbookId(),bookModel,100000);
+            if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + bookModel.getBookId()) < 0)
+                redisTemplate.opsForValue().set("bookID:" + bookModel.getBookId(),bookModel,100000);
         }
 
         return bookModel;

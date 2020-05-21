@@ -62,5 +62,7 @@ public interface BookDOMapper {
      */
     int updateByPrimaryKey(BookDO record);
 
+    Page<BookDO> listBookByAuthorPage(String authorID);
+
     Page<BookDO> listBookByPage();
 }

@@ -49,6 +49,7 @@ public class UserServiceImpl implements UserService {
         return convertFromDataObject(userDO, userPasswordDO);
     }
 
+
     private UserModel convertFromDataObject(UserDO userDO, UserPasswordDO userPasswordDO) {
         if (userDO == null) {
             return null;
