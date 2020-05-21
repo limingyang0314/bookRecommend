@@ -63,6 +63,15 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    public List<BookModel> listBookByTagPage(String tagID, int page, int size){
+        PageHelper.startPage(page, size);
+        Page<BookDO> bookPage = bookDOMapper.listBookByTagPage(tagID);
+        List<BookDO> bookList = bookPage.getResult();
+
+        return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
+    }
+
+    @Override
     public BookModel createBook(BookModel bookModel) throws BusinessException {
         return null;
     }

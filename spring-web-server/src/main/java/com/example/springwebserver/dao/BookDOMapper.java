@@ -64,5 +64,7 @@ public interface BookDOMapper {
 
     Page<BookDO> listBookByAuthorPage(String authorID);
 
+    Page<BookDO> listBookByTagPage(String tagID);
+
     Page<BookDO> listBookByPage();
 }

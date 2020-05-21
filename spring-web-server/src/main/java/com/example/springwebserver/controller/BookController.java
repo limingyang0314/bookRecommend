@@ -71,17 +71,18 @@ public class BookController extends GlobalExceptionHandler {
     @ResponseBody
     public CommonReturnType getBookByTagPage(@RequestParam(name = "page") int page,
                                              @RequestParam(name = "size") int size, @PathVariable String tag_ID) throws BusinessException {
-        return CommonReturnType.create(bookService.listBookByPage(page, size));
+        List<BookModel> data = bookService.listBookByTagPage(tag_ID,page,size);
+        return CommonReturnType.create(data);
 
     }
 
     /**
-     * 根据图书ID分页获取书籍
+     * 根据图书ID获取书籍
      * @param book_ID
      * @return
      * @throws BusinessException
      */
-    @ApiOperation("根据图书ID分页获取书籍")
+    @ApiOperation("根据图书ID获取书籍")
     @GetMapping("/{book_ID}")
     @ResponseBody
     public CommonReturnType getBookByBookID(@PathVariable long book_ID) throws BusinessException {
@@ -90,7 +91,7 @@ public class BookController extends GlobalExceptionHandler {
             log.warn("==== [get book] ==== book not exit");
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
         }
-        return CommonReturnType.create(bookService.getBookById(book_ID));
+        return CommonReturnType.create(data);
     }
 
 
