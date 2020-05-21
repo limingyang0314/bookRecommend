@@ -43,7 +43,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookModel getBookByIdInCache(Long book) {
-        return null;
+        return (BookModel)redisTemplate.opsForValue().get("bookID:" + book);
     }
 
     @Override
@@ -92,6 +92,8 @@ public class BookServiceImpl implements BookService {
                 sellerList.add(seller);
             }
             bookModel.setSellerlist(sellerList);
+            if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + bookModel.getbookId()) < 0)
+                redisTemplate.opsForValue().set("bookID:" + bookModel.getbookId(),bookModel,100000);
         }
 
         return bookModel;
