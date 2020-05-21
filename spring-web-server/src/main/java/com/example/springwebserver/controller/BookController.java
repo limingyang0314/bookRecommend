@@ -1,11 +1,13 @@
 package com.example.springwebserver.controller;
 
+import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
 import com.example.springwebserver.service.BookService;
 import com.example.springwebserver.service.model.BookModel;
 import com.mysql.cj.QueryResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,6 +32,7 @@ public class BookController extends GlobalExceptionHandler {
      * @return
      * @throws BusinessException
      */
+    @ApiOperation("分页获取书籍")
     @GetMapping("/list")
     @ResponseBody
     public CommonReturnType getBookByPage(@RequestParam(name = "page") int page,
@@ -46,6 +49,7 @@ public class BookController extends GlobalExceptionHandler {
      * @return
      * @throws BusinessException
      */
+    @ApiOperation("根据作者id分页获取书籍")
     @GetMapping("/author/{author_ID}")
     @ResponseBody
     public CommonReturnType getBookByAuthorPage(@RequestParam(name = "page") int page,
@@ -62,6 +66,7 @@ public class BookController extends GlobalExceptionHandler {
      * @return
      * @throws BusinessException
      */
+    @ApiOperation("根据标签ID分页获取书籍")
     @GetMapping("/tag/{tag_ID}")
     @ResponseBody
     public CommonReturnType getBookByTagPage(@RequestParam(name = "page") int page,
@@ -70,11 +75,22 @@ public class BookController extends GlobalExceptionHandler {
 
     }
 
+    /**
+     * 根据图书ID分页获取书籍
+     * @param book_ID
+     * @return
+     * @throws BusinessException
+     */
+    @ApiOperation("根据图书ID分页获取书籍")
     @GetMapping("/{book_ID}")
     @ResponseBody
-    public CommonReturnType getBookByBookID(@PathVariable String book_ID) throws BusinessException {
-        return null;
-
+    public CommonReturnType getBookByBookID(@PathVariable long book_ID) throws BusinessException {
+        BookModel data = bookService.getBookById(book_ID);
+        if(data == null){
+            log.warn("==== [get book] ==== book not exit");
+            throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
+        }
+        return CommonReturnType.create(bookService.getBookById(book_ID));
     }
 
 

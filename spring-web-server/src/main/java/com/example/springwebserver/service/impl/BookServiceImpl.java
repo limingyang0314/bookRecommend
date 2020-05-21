@@ -2,6 +2,7 @@ package com.example.springwebserver.service.impl;
 
 import com.example.springwebserver.dao.BookDOMapper;
 import com.example.springwebserver.dataObject.BookDO;
+import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.BookService;
@@ -38,11 +39,17 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public BookModel getBookById(Long book) {
-        return null;
+        BookDO bookDO = bookDOMapper.selectByPrimaryKey(book);
+        return convertModelFromDO(bookDO);
     }
+
 
     @Override
     public BookModel getBookByIdInCache(Long book) {
+        if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + bookModel.getbookId()) < 0){
+            //未缓存或已过期
+            return getBookById(book);
+        }
         return (BookModel)redisTemplate.opsForValue().get("bookID:" + book);
     }
 
