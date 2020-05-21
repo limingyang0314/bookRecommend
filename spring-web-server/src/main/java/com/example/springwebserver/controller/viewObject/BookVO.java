@@ -9,8 +9,9 @@ import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.util.List;
 
-@ApiModel("图书实体")
+
 @Data
+@ApiModel("图书实体")
 public class BookVO {
     private Long bookId;
 

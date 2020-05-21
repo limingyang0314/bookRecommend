@@ -40,7 +40,7 @@ public class UserController extends GlobalExceptionHandler {
     @GetMapping("")
     @ResponseBody
     public CommonReturnType getUser(@RequestParam(name = "id") Long id) throws BusinessException {
-        UserModel userModel = userService.getUserById(id);
+        UserModel userModel = userService.getUserByIdInCache(id);
         if (userModel == null) {
             log.warn("==== [get user] ==== user not exit");
             throw new BusinessException(EmBusinessError.USER_NOT_EXIST);

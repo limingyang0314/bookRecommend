@@ -33,7 +33,7 @@
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
 <!--               enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
-        <table tableName="books"  domainObjectName="BookDO" enableCountByExample="false"
+        <table tableName="authors"  domainObjectName="AuthorDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"></table>
 

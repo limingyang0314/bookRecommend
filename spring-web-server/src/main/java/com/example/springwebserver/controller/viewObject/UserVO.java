@@ -5,8 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 
-@ApiModel("用户实体")
+
 @Data
+@ApiModel("用户实体")
 public class UserVO {
 
     private Long userId;
