@@ -76,6 +76,17 @@
                         </execution>
                     </executions>
                 </plugin>
+                
+                <plugin>
+	                <groupId>org.mybatis.generator</groupId>
+	                <artifactId>mybatis-generator-maven-plugin</artifactId>
+	                <configuration>
+	                    <!--允许覆盖生成的文件 -->
+	                    <overwrite>true</overwrite>
+	                    <!--允许移动生成的文件 -->
+	                    <verbose>true</verbose>
+	                </configuration>
+            	</plugin>
             </plugins>
         </pluginManagement>
     </build>
