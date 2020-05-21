@@ -68,4 +68,19 @@ public class BookModel implements Serializable {
     @Min(value = 0, message = "rating can't less than 0")
     @Max(value = 10, message = "rating can't large than 10")
     private Integer rating;
+
+	public void setPrice(BigDecimal valueOf) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setTagIds(List<String> asList) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setSellerlist(List<Seller> sellerList2) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -36,6 +36,10 @@
         <table tableName="authors"  domainObjectName="AuthorDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"></table>
+               
+        <table tableName="countries"  domainObjectName="CountryDO" enableCountByExample="false"
+               enableUpdateByExample="false" enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
 <!--        <table tableName="users_password"  domainObjectName="UserPasswordDO" enableCountByExample="false"-->
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->

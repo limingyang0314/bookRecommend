@@ -18,4 +18,12 @@ public class CommonReturnType {
         type.setData(result);
         return type;
     }
+    
+    public void setStatus(boolean status) {
+    	this.status = status;
+    }
+    
+    public void setData(Object result) {
+    	this.data = result;
+    }
 }
