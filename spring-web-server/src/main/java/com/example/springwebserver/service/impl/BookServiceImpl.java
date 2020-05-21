@@ -2,6 +2,7 @@ package com.example.springwebserver.service.impl;
 
 import com.example.springwebserver.dao.BookDOMapper;
 import com.example.springwebserver.dataObject.BookDO;
+import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.BookService;
 import com.example.springwebserver.service.model.BookModel;
@@ -33,6 +34,7 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+    private BookDO bookDO;
 
     @Override
     public BookModel getBookById(Long book) {
@@ -59,6 +61,7 @@ public class BookServiceImpl implements BookService {
     }
 
     private BookModel convertModelFromDO(BookDO bookDO) {
+        this.bookDO = bookDO;
         BookModel bookModel = new BookModel();
         BeanUtils.copyProperties(bookDO, bookModel);
         bookModel.setPrice(BigDecimal.valueOf(bookDO.getPrice()));
@@ -75,7 +78,17 @@ public class BookServiceImpl implements BookService {
                     continue;
                 }
                 String[] temp = s.split(",");
-                BookModel.Seller seller = new BookModel.Seller(temp[0], new BigDecimal(temp[1]));
+                BookModel.Seller seller;
+                if (StringUtils.equals(temp[1].trim(), "None")) {
+                    continue;
+                }
+                try {
+                    seller = new BookModel.Seller(temp[0], new BigDecimal(temp[1].trim()));
+                } catch (NumberFormatException e) {
+                    System.out.println(bookDO.getSellerlist());
+                    continue;
+                }
+
                 sellerList.add(seller);
             }
             bookModel.setSellerlist(sellerList);

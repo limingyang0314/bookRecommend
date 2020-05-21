@@ -11,7 +11,8 @@ import java.util.List;
 
 @Data
 public class BookModel implements Serializable {
-    public static class Seller {
+    @Data
+    public static class Seller implements Serializable {
         String place;
         BigDecimal price;
 

@@ -29,7 +29,7 @@ public class BookController extends GlobalExceptionHandler {
     @GetMapping("/list")
     @ResponseBody
     public CommonReturnType getBookByPage(@RequestParam(name = "page") int page,
-                                          @RequestParam(name = "size") int size) {
+                                          @RequestParam(name = "size") int size) throws BusinessException {
         return CommonReturnType.create(bookService.listBookByPage(page, size));
 
     }

@@ -18,7 +18,8 @@ public enum EmBusinessError implements CommonError {
     // 30 start with, about book and deal
     STOCK_NOT_ENOUGH(301, "stock not enough"),
     RATELIMIT(303, "the requests are too much, please try it latter"),
-    ITEM_NOT_EXIT(304, "book not exit");
+    ITEM_NOT_EXIT(304, "book not exit"),
+    BOOK_DATA_FORMAT_ERROR(305, "transform error occur, when transform DO to model");
 
 
     EmBusinessError(int errCode, String errMsg){
