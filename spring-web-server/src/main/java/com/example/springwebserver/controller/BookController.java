@@ -83,10 +83,10 @@ public class BookController extends GlobalExceptionHandler {
      * @throws BusinessException
      */
     @ApiOperation("根据图书ID获取书籍")
-    @GetMapping("/{book_ID}")
+    @GetMapping("")
     @ResponseBody
-    public CommonReturnType getBookByBookID(@PathVariable long book_ID) throws BusinessException {
-        BookModel data = bookService.getBookById(book_ID);
+    public CommonReturnType getBookByBookID(@RequestParam(name = "bookId") long bookId) throws BusinessException {
+        BookModel data = bookService.getBookById(bookId);
         if(data == null){
             log.warn("==== [get book] ==== book not exit");
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);

@@ -16,7 +16,6 @@ public enum EmBusinessError implements CommonError {
     USER_LOGIN_FORM_CONTENT_BLACK(205, "user name or password can't be blank"),
 
 
-
     // 30 start with, about book and deal
     STOCK_NOT_ENOUGH(301, "stock not enough"),
     RATELIMIT(303, "the requests are too much, please try it latter"),
