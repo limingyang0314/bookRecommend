@@ -50,10 +50,10 @@ public class BookController extends GlobalExceptionHandler {
      * @throws BusinessException
      */
     @ApiOperation("根据作者id分页获取书籍")
-    @GetMapping("/author/{author_ID}")
+    @GetMapping("/author")
     @ResponseBody
     public CommonReturnType getBookByAuthorPage(@RequestParam(name = "page") int page,
-                                                @RequestParam(name = "size") int size, @PathVariable String author_ID) throws BusinessException {
+                                                @RequestParam(name = "size") int size, @RequestParam(name = "author_ID") String author_ID) throws BusinessException {
         return CommonReturnType.create(bookService.listBookByAuthorPage(author_ID, page, size));
 
     }
@@ -67,10 +67,10 @@ public class BookController extends GlobalExceptionHandler {
      * @throws BusinessException
      */
     @ApiOperation("根据标签ID分页获取书籍")
-    @GetMapping("/tag/{tag_ID}")
+    @GetMapping("/tag")
     @ResponseBody
     public CommonReturnType getBookByTagPage(@RequestParam(name = "page") int page,
-                                             @RequestParam(name = "size") int size, @PathVariable String tag_ID) throws BusinessException {
+                                             @RequestParam(name = "size") int size, @RequestParam(name = "tag_ID") String tag_ID) throws BusinessException {
         List<BookModel> data = bookService.listBookByTagPage(tag_ID,page,size);
         return CommonReturnType.create(data);
 
@@ -85,8 +85,13 @@ public class BookController extends GlobalExceptionHandler {
     @ApiOperation("根据图书ID获取书籍")
     @GetMapping("")
     @ResponseBody
+<<<<<<< HEAD
     public CommonReturnType getBookByBookID(@RequestParam(name = "bookId") long bookId) throws BusinessException {
         BookModel data = bookService.getBookById(bookId);
+=======
+    public CommonReturnType getBookByBookID(@RequestParam(name = "book_ID") long book_ID) throws BusinessException {
+        BookModel data = bookService.getBookById(book_ID);
+>>>>>>> d06ea346bd31022e4419193920aaacf914ad9e06
         if(data == null){
             log.warn("==== [get book] ==== book not exit");
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
