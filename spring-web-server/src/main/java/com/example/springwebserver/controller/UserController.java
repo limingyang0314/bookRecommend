@@ -20,6 +20,8 @@ import sun.misc.BASE64Encoder;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -109,7 +111,12 @@ public class UserController extends GlobalExceptionHandler {
 
         redisTemplate.opsForValue().set(uuidToken, userModel);
         redisTemplate.expire(uuidToken, 1, TimeUnit.HOURS);
-        return CommonReturnType.create(uuidToken);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("token", uuidToken);
+        map.put("user", userModel);
+
+        return CommonReturnType.create(map);
     }
 
 }
