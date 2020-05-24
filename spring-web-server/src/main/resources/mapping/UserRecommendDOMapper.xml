@@ -95,4 +95,12 @@
     set books = #{books,jdbcType=VARCHAR}
     where user_id = #{userId,jdbcType=BIGINT}
   </update>
+
+  <!--根据UserID获取最基本的推荐-->
+  <select id="getBasicRecommendByUserID" parameterType="java.lang.String">
+    select
+    <include refid="Base_Column_List" />
+    from users_recommend
+    where user_id = #{userId}
+  </select>
 </mapper>
