@@ -29,7 +29,7 @@
 
         <!--生成对应表及类名-->
 
-        <table tableName="books"  domainObjectName="BookDO" enableCountByExample="false"
+        <table tableName="books_recommend"  domainObjectName="BookRecommendDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"></table>
 
