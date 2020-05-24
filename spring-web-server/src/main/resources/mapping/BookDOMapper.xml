@@ -359,6 +359,9 @@
     select
     <include refid="Base_Column_List" />
     from books
-    where book_id IN (#{bookIDs})
+    where book_id IN
+    <foreach collection="list" item="book_id" index="index" open="(" close=")" separator=",">
+      #{book_id}
+    </foreach>
   </select>
 </mapper>

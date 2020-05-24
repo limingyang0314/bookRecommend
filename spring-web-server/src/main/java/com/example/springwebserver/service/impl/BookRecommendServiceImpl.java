@@ -12,6 +12,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,8 +40,9 @@ public class BookRecommendServiceImpl implements BookRecommendService{
         //获取推荐的id集合
         String recommends = bookRecommend.getBooks();
         System.out.println(recommends);
+        List<String> books = Arrays.asList(recommends.split(","));
         PageHelper.startPage(page, size);
-        Page<BookDO> bookPage = bookDOMapper.listBookByBookIDSet(recommends);
+        Page<BookDO> bookPage = bookDOMapper.listBookByBookIDSet(books);
         List<BookDO> bookList = bookPage.getResult();
 
         return bookList.stream().map(bookService::convertModelFromDO).collect(Collectors.toList());

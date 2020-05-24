@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface BookRecommendService {
     List<BookModel> listBookRecommendByBookID(Long bookID, int page, int size);
+
+    List<BookModel> listBookRecommendByUserID(Long userID, int page, int size);
 }

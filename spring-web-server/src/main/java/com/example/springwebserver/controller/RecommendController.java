@@ -7,6 +7,7 @@ import com.example.springwebserver.response.CommonReturnType;
 import com.example.springwebserver.service.BookRecommendService;
 import com.example.springwebserver.service.BookService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,15 +37,22 @@ public class RecommendController {
 
     /**
      * 通过bookID获取相关推荐
-     * @param userName
+     * @param page, size, bookID
      * @return
      * @throws BusinessException
      */
+    @ApiOperation("获取某本书的相关书籍推荐")
     @GetMapping("/book")
     @ResponseBody
     public CommonReturnType getRecommendByBookID(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "bookID") Long bookID) throws BusinessException {
+        return CommonReturnType.create(bookRecommendService.listBookRecommendByBookID(bookID,page,size));
+    }
+
+    public CommonReturnType getRecommendByUserID(@RequestParam(name = "page") int page,
+                                                 @RequestParam(name = "size") int size,
+                                                 @RequestParam(name = "UserID") Long bookID) throws BusinessException {
         return CommonReturnType.create(bookRecommendService.listBookRecommendByBookID(bookID,page,size));
     }
 }
