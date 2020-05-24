@@ -1,6 +1,10 @@
 package com.example.springwebserver.dao;
 
+import com.example.springwebserver.dataObject.BookDO;
 import com.example.springwebserver.dataObject.TagDO;
+import com.github.pagehelper.Page;
+
+import java.util.List;
 
 public interface TagDOMapper {
     /**
@@ -50,4 +54,6 @@ public interface TagDOMapper {
      * @mbg.generated Thu May 21 21:11:28 CST 2020
      */
     int updateByPrimaryKey(TagDO record);
+
+    List<TagDO> listTagByTagIDs(List<String> tags);
 }

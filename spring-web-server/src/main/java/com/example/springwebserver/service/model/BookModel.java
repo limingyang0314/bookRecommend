@@ -50,6 +50,10 @@ public class BookModel implements Serializable {
     @Size(min = 1, message = "a boos has at least one tag")
     private List<String> tagIds;
 
+    @NotNull(message = "tags can't be blank")
+    @Size(min = 1, message = "a boos has at least one tag")
+    private List<String> tags;
+
     @NotNull(message = "page can't be blank")
     @Min(value = 1, message = "age can't less than 1")
     private Integer page;

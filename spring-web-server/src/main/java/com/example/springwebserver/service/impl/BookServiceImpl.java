@@ -1,11 +1,14 @@
 package com.example.springwebserver.service.impl;
 
 import com.example.springwebserver.dao.BookDOMapper;
+import com.example.springwebserver.dao.TagDOMapper;
 import com.example.springwebserver.dataObject.BookDO;
+import com.example.springwebserver.dataObject.TagDO;
 import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.BookService;
+import com.example.springwebserver.service.RedisService;
 import com.example.springwebserver.service.model.BookModel;
 import com.example.springwebserver.validator.ValidatorImpl;
 import com.github.pagehelper.Page;
@@ -31,11 +34,19 @@ public class BookServiceImpl implements BookService {
     private BookDOMapper bookDOMapper;
 
     @Autowired
+    private TagDOMapper tagDOMapper;
+
+    @Autowired
     private ValidatorImpl validator;
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    //@Autowired
     private BookDO bookDO;
+
+    @Autowired
+    private RedisService redisService;
 
     @Override
     public BookModel getBookById(Long book) {
@@ -87,12 +98,27 @@ public class BookServiceImpl implements BookService {
 
     public BookModel convertModelFromDO(BookDO bookDO) {
         this.bookDO = bookDO;
+        //缓存中有则直接获取
+//        if(redisService.getExpire("bookID:" + bookDO.getBookId()) >= 0)
+//            return (BookModel) redisService.get("bookID:" + bookDO.getBookId());
         BookModel bookModel = new BookModel();
         BeanUtils.copyProperties(bookDO, bookModel);
         bookModel.setPrice(BigDecimal.valueOf(bookDO.getPrice()));
         if (!StringUtils.isEmpty(bookDO.getTagIds())) {
             String[] tagIds = bookDO.getTagIds().split(",");
             bookModel.setTagIds(Arrays.asList(tagIds));
+            //List<String> tagIDList = bookModel.getTagIds();
+            System.out.println("size of tagIDs:" + bookModel.getTagIds().size());
+            List<TagDO> tags = tagDOMapper.listTagByTagIDs(bookModel.getTagIds());//.getResult();
+            System.out.println("size of tags:" + tags.size());
+            List<String> tagsString = new ArrayList<String>();
+            System.out.println(tags);
+            for(TagDO t : tags){
+                tagsString.add(t.getTagName());
+                //System.out.println(t.getTagName());
+            }
+            System.out.println(tagsString);
+            bookModel.setTags(tagsString);
         }
 
         if (!StringUtils.isEmpty(bookDO.getSellerlist())) {
@@ -116,8 +142,10 @@ public class BookServiceImpl implements BookService {
 
                 sellerList.add(seller);
             }
+            //String tagIDs = bookModel.getTagIds();
+
             bookModel.setSellerlist(sellerList);
-            if(redisTemplate.opsForValue().getOperations().getExpire("bookID:" + bookModel.getBookId()) < 0)
+            if(redisService.getExpire("bookID:" + bookDO.getBookId()) < 0)
                 redisTemplate.opsForValue().set("bookID:" + bookModel.getBookId(),bookModel,100000);
         }
 
