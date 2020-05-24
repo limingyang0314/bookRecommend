@@ -140,4 +140,24 @@ public class UserController extends GlobalExceptionHandler {
         return CommonReturnType.create(ret);
     }
 
+    @ApiOperation("设为想读/取消想读")
+    @GetMapping(value = "/wantRead")
+    @ResponseBody
+    public CommonReturnType setWantRead(@RequestParam(name = "bookID") long userID){
+        //String token = httpServletRequest.getHeader("Authorization");
+        //UserCenterModel ret = userCenterService.getUserCenterByUserID(userID);
+        Object ret = null;
+        return CommonReturnType.create(ret);
+    }
+
+    @ApiOperation("设为已读/取消已读")
+    @GetMapping(value = "/hasRead")
+    @ResponseBody
+    public CommonReturnType setHasRead(@RequestParam(name = "bookID") long userID){
+        //String token = httpServletRequest.getHeader("Authorization");
+        //UserCenterModel ret = userCenterService.getUserCenterByUserID(userID);
+        Object ret = null;
+        return CommonReturnType.create(ret);
+    }
+
 }
