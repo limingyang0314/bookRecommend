@@ -107,15 +107,11 @@ public class BookServiceImpl implements BookService {
         if (!StringUtils.isEmpty(bookDO.getTagIds())) {
             String[] tagIds = bookDO.getTagIds().split(",");
             bookModel.setTagIds(Arrays.asList(tagIds));
-            //List<String> tagIDList = bookModel.getTagIds();
-            System.out.println("size of tagIDs:" + bookModel.getTagIds().size());
-            List<TagDO> tags = tagDOMapper.listTagByTagIDs(bookModel.getTagIds());//.getResult();
-            System.out.println("size of tags:" + tags.size());
+            List<TagDO> tags = tagDOMapper.listTagByTagIDs(bookModel.getTagIds());
             List<String> tagsString = new ArrayList<String>();
             System.out.println(tags);
             for(TagDO t : tags){
                 tagsString.add(t.getTagName());
-                //System.out.println(t.getTagName());
             }
             System.out.println(tagsString);
             bookModel.setTags(tagsString);
