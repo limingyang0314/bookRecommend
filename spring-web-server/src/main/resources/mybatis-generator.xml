@@ -29,9 +29,13 @@
 
         <!--生成对应表及类名-->
 
-        <table tableName="users_recommend"  domainObjectName="UserRecommendDO" enableCountByExample="false"
-               enableUpdateByExample="false" enableDeleteByExample="false"
-               enableSelectByExample="false" selectByExampleQueryId="false"></table>
+<!--        <table tableName="users_has_read"  domainObjectName="UserHasReadDO" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
+
+<!--        <table tableName="users_want_read"  domainObjectName="UserWantReadDO" enableCountByExample="false"-->
+<!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
 <!--        <table tableName="authors"  domainObjectName="AuthorDO" enableCountByExample="false"-->
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->

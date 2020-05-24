@@ -4,7 +4,9 @@ import com.example.springwebserver.controller.viewObject.UserVO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
+import com.example.springwebserver.service.UserCenterService;
 import com.example.springwebserver.service.UserService;
+import com.example.springwebserver.service.model.UserCenterModel;
 import com.example.springwebserver.service.model.UserModel;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Encoder;
 
+import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -30,12 +33,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "用户相关接口", value = "提供用户相关的 Rest API")
 public class UserController extends GlobalExceptionHandler {
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     @Autowired
     private UserService userService;
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private UserCenterService userCenterService;
 
 
     @ApiOperation("根据 id 获取用户")
@@ -123,8 +131,13 @@ public class UserController extends GlobalExceptionHandler {
      * 获取用户个人中心的数据
      * @return
      */
-    public CommonReturnType userCenter(){
-        return null;
+    @ApiOperation("用户中心数据")
+    @GetMapping(value = "/center")
+    @ResponseBody
+    public CommonReturnType userCenter(@RequestParam(name = "userID") long userID){
+        //String token = httpServletRequest.getHeader("Authorization");
+        UserCenterModel ret = userCenterService.getUserCenterByUserID(userID);
+        return CommonReturnType.create(ret);
     }
 
 }

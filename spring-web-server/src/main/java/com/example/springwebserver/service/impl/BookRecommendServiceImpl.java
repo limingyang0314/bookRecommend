@@ -47,7 +47,7 @@ public class BookRecommendServiceImpl implements BookRecommendService{
         System.out.println(recommends);
         List<String> books = Arrays.asList(recommends.split(","));
         PageHelper.startPage(page, size);
-        Page<BookDO> bookPage = bookDOMapper.listBookByBookIDSet(books);
+        Page<BookDO> bookPage = bookDOMapper.listBookByBookIDSetPage(books);
         List<BookDO> bookList = bookPage.getResult();
 
         return bookList.stream().map(bookService::convertModelFromDO).collect(Collectors.toList());
@@ -68,7 +68,7 @@ public class BookRecommendServiceImpl implements BookRecommendService{
         System.out.println(recommends);
         List<String> books = Arrays.asList(recommends.split(","));
         PageHelper.startPage(page, size);
-        Page<BookDO> bookPage = bookDOMapper.listBookByBookIDSet(books);
+        Page<BookDO> bookPage = bookDOMapper.listBookByBookIDSetPage(books);
         List<BookDO> bookList = bookPage.getResult();
 
         return bookList.stream().map(bookService::convertModelFromDO).collect(Collectors.toList());

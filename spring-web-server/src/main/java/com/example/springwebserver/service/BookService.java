@@ -24,6 +24,10 @@ public interface BookService {
 
     List<BookModel> listBookByTagPage(String tagID, int page, int size);
 
+    List<BookModel> listBookByBookIDSet(List<String> books, int page, int size);
+
+    List<BookModel> listBookByBookIDSet(List<String> books);
+
     BookModel convertModelFromDO(BookDO bookDO);
 
 }
