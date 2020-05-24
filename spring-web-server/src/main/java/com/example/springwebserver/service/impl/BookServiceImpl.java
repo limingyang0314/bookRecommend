@@ -85,7 +85,7 @@ public class BookServiceImpl implements BookService {
         return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
     }
 
-    private BookModel convertModelFromDO(BookDO bookDO) {
+    public BookModel convertModelFromDO(BookDO bookDO) {
         this.bookDO = bookDO;
         BookModel bookModel = new BookModel();
         BeanUtils.copyProperties(bookDO, bookModel);

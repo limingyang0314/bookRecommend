@@ -119,4 +119,12 @@ public class UserController extends GlobalExceptionHandler {
         return CommonReturnType.create(map);
     }
 
+    /**
+     * 获取用户个人中心的数据
+     * @return
+     */
+    public CommonReturnType userCenter(){
+        return null;
+    }
+
 }

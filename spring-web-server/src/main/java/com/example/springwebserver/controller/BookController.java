@@ -86,7 +86,7 @@ public class BookController extends GlobalExceptionHandler {
     @GetMapping("")
     @ResponseBody
 
-    public CommonReturnType getBookByBookID(@RequestParam(name = "bookId") long bookId) throws BusinessException {
+    public CommonReturnType getBookByBookID(@RequestParam(name = "bookID") long bookId) throws BusinessException {
         BookModel data = bookService.getBookById(bookId);
         if(data == null){
             log.warn("==== [get book] ==== book not exit");
