@@ -110,6 +110,14 @@ public class BookServiceImpl implements BookService {
         return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
     }
 
+    public List<BookModel> listBookByHotRank(int page, int size){
+        PageHelper.startPage(page, size);
+        Page<BookDO> bookPage = bookDOMapper.listBookByHotRank();
+        List<BookDO> bookList = bookPage.getResult();
+
+        return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
+    }
+
     public BookModel convertModelFromDO(BookDO bookDO) {
         this.bookDO = bookDO;
         //缓存中有则直接获取

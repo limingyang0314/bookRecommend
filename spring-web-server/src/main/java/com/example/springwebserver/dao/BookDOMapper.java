@@ -70,5 +70,7 @@ public interface BookDOMapper {
 
     List<BookDO> listBookByBookIDSet(List<String> books);
 
+    Page<BookDO> listBookByHotRank();
+
     Page<BookDO> listBookByPage();
 }

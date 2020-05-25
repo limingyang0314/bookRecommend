@@ -1,7 +1,9 @@
 package com.example.springwebserver.service.impl;
 
+import com.example.springwebserver.dao.ReviewDOMapper;
 import com.example.springwebserver.dao.UserHasReadDOMapper;
 import com.example.springwebserver.dao.UserWantReadDOMapper;
+import com.example.springwebserver.dataObject.ReviewDO;
 import com.example.springwebserver.dataObject.UserHasReadDO;
 import com.example.springwebserver.dataObject.UserWantReadDO;
 import com.example.springwebserver.service.BookService;
@@ -31,6 +33,9 @@ public class UserCenterServiceImpl implements UserCenterService {
     @Autowired
     private UserHasReadDOMapper userHasReadDOMapper;
 
+    @Autowired
+    private ReviewDOMapper reviewDOMapper;
+
 
     public UserCenterModel getUserCenterByUserID(Long userID){
         UserCenterModel ret = new UserCenterModel();
@@ -51,6 +56,9 @@ public class UserCenterServiceImpl implements UserCenterService {
         }
         ret.setWantRead(want);
         ret.setHasRead(has);
+        ret.setReviews(this.getUserReviews(userID));
+
+        getUserReviews(userID);
         return ret;
     }
 
@@ -78,5 +86,12 @@ public class UserCenterServiceImpl implements UserCenterService {
         }
         List<String> books = Arrays.asList(ret.split(","));
         return books;
+    }
+
+    private List<ReviewDO> getUserReviews(Long userID){
+        List<ReviewDO> data = reviewDOMapper.listReviewByUserID(userID);
+        //System.out.print("reviews:");
+        //System.out.println(data);
+        return data;
     }
 }

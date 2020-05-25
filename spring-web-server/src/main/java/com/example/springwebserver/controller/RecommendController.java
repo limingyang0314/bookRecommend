@@ -78,4 +78,16 @@ public class RecommendController {
         }
         return CommonReturnType.create(data);
     }
+
+    @ApiOperation("获取热书榜")
+    @GetMapping("/hotRank")
+    @ResponseBody
+    public CommonReturnType getHotRank(@RequestParam(name = "page") int page,
+                                                 @RequestParam(name = "size") int size) throws BusinessException {
+        List<BookModel> data = bookService.listBookByHotRank(page,size);
+        if(data.size() == 0){
+            throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
+        }
+        return CommonReturnType.create(data);
+    }
 }

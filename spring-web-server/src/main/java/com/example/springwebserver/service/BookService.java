@@ -28,6 +28,9 @@ public interface BookService {
 
     List<BookModel> listBookByBookIDSet(List<String> books);
 
+    List<BookModel> listBookByHotRank(int page, int size);
+
+
     BookModel convertModelFromDO(BookDO bookDO);
 
 }
