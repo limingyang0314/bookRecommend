@@ -152,39 +152,7 @@ public class UserController extends GlobalExceptionHandler {
     @GetMapping(value = "/wantRead")
     @ResponseBody
     public CommonReturnType setWantRead(@RequestParam(name = "bookID") long bookID) throws BusinessException{
-        //String token = httpServletRequest.getHeader("Authorization");
-        //UserCenterModel ret = userCenterService.getUserCenterByUserID(userID);
-        HashMap<String,String> ret = new HashMap<String,String>();
-        UserModel user = getUserByToken();
-        Long userID = user.getUserId();
-        UserWantReadDO want = userWantReadDOMapper.selectByPrimaryKey(userID);
-        List<String> wantList = Arrays.asList(want.getBooks().split(","));
-        String newWant = "";
-        boolean found = false;
-        String message;
-        for(String s : wantList){
-            if(s.equals("")){
-                continue;
-            }
-            if(!s.equals(Long.toString(bookID))){
-                newWant += s + ",";
-            }else{
-                found = true;
-            }
-        }
-        if(found){
-            //说明之前就有，要取消
-            message = "Delete success.";
-            if(newWant.length() > 0)
-                newWant = newWant.substring(0, newWant.length() - 1);
-        }else{
-            //加上
-            message = "Add success.";
-            newWant += Long.toString(bookID);
-        }
-        ret.put("message",message);
-        want.setBooks(newWant);
-        userWantReadDOMapper.updateByPrimaryKey(want);
+        HashMap<String,String> ret = userService.setWantRead(bookID);
         return CommonReturnType.create(ret);
     }
 
@@ -192,51 +160,8 @@ public class UserController extends GlobalExceptionHandler {
     @GetMapping(value = "/hasRead")
     @ResponseBody
     public CommonReturnType setHasRead(@RequestParam(name = "bookID") long bookID) throws BusinessException{
-        HashMap<String,String> ret = new HashMap<String,String>();
-        UserModel user = getUserByToken();
-        Long userID = user.getUserId();
-        UserHasReadDO has = userHasReadDOMapper.selectByPrimaryKey(userID);
-        List<String> hasList = Arrays.asList(has.getBooks().split(","));
-        String newHas = "";
-        boolean found = false;
-        String message;
-        for(String s : hasList){
-            if(s.equals("")){
-                continue;
-            }
-            if(!s.equals(Long.toString(bookID))){
-                newHas += s + ",";
-            }else{
-                found = true;
-            }
-        }
-        if(found){
-            //说明之前就有，要取消
-            message = "Delete success.";
-            if(newHas.length() > 0)
-                newHas = newHas.substring(0, newHas.length() - 1);
-        }else{
-            //加上
-            message = "Add success.";
-            newHas += Long.toString(bookID);
-        }
-        ret.put("message",message);
-        has.setBooks(newHas);
-        userHasReadDOMapper.updateByPrimaryKey(has);
+        HashMap<String,String> ret = userService.setHasRead(bookID);
         return CommonReturnType.create(ret);
-    }
-
-    public UserModel getUserByToken() throws BusinessException{
-        String token = httpServletRequest.getHeader("Authorization");
-        if (StringUtils.isEmpty(token)) {
-            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN, "illegal user");
-        }
-
-        UserModel userModel = (UserModel) redisTemplate.opsForValue().get(token);
-        if (userModel == null) {
-            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN);
-        }
-        return userModel;
     }
 
 }

@@ -1,15 +1,14 @@
 package com.example.springwebserver.service.impl;
 
-import com.example.springwebserver.dao.BookDOMapper;
-import com.example.springwebserver.dao.TagDOMapper;
-import com.example.springwebserver.dataObject.BookDO;
-import com.example.springwebserver.dataObject.TagDO;
-import com.example.springwebserver.dataObject.UserDO;
+import com.example.springwebserver.dao.*;
+import com.example.springwebserver.dataObject.*;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.BookService;
 import com.example.springwebserver.service.RedisService;
+import com.example.springwebserver.service.UserService;
 import com.example.springwebserver.service.model.BookModel;
+import com.example.springwebserver.service.model.UserModel;
 import com.example.springwebserver.validator.ValidatorImpl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,11 +42,23 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private UserService userService;
+
     //@Autowired
     private BookDO bookDO;
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private RatingDOMapper ratingDOMapper;
+
+    @Autowired
+    private UserWantReadDOMapper userWantReadDOMapper;
+
+    @Autowired
+    private UserHasReadDOMapper userHasReadDOMapper;
 
     @Override
     public BookModel getBookById(Long book) {
@@ -118,6 +130,34 @@ public class BookServiceImpl implements BookService {
         return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
     }
 
+    @Override
+    public HashMap<String,String> ratingBook(Long bookId,double ratingNum) throws BusinessException {
+        UserModel user = userService.getUserByToken();
+        RatingDOKey key = new RatingDOKey();
+        key.setBookId(bookId);
+        key.setUserId(user.getUserId());
+        RatingDO rating = ratingDOMapper.selectByPrimaryKey(key);
+        String message;
+        if(rating == null){
+            //没评价过
+            rating = new RatingDO();
+            rating.setRating(ratingNum);
+            rating.setBookId(bookId);
+            rating.setUserId(user.getUserId());
+            ratingDOMapper.insertSelective(rating);
+            message = "Insert rating success.";
+        }else{
+            rating.setRating(ratingNum);
+            ratingDOMapper.updateByPrimaryKey(rating);
+            message = "Update rating success.";
+        }
+        HashMap<String ,String> ret = new HashMap<String ,String>();
+        ret.put("message",message);
+        return ret;
+    }
+
+
+
     public BookModel convertModelFromDO(BookDO bookDO) {
         this.bookDO = bookDO;
         //缓存中有则直接获取
@@ -169,6 +209,8 @@ public class BookServiceImpl implements BookService {
 
         return bookModel;
     }
+
+
 
 
 }

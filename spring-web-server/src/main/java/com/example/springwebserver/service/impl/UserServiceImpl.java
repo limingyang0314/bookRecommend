@@ -1,9 +1,13 @@
 package com.example.springwebserver.service.impl;
 
 import com.example.springwebserver.dao.UserDOMapper;
+import com.example.springwebserver.dao.UserHasReadDOMapper;
 import com.example.springwebserver.dao.UserPasswordDOMapper;
+import com.example.springwebserver.dao.UserWantReadDOMapper;
 import com.example.springwebserver.dataObject.UserDO;
+import com.example.springwebserver.dataObject.UserHasReadDO;
 import com.example.springwebserver.dataObject.UserPasswordDO;
+import com.example.springwebserver.dataObject.UserWantReadDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.UserService;
@@ -18,6 +22,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -35,6 +43,15 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
+
+    @Autowired
+    private UserWantReadDOMapper userWantReadDOMapper;
+
+    @Autowired
+    private UserHasReadDOMapper userHasReadDOMapper;
 
 
     @Override
@@ -130,5 +147,91 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
         }
         return userModel;
+    }
+
+    @Override
+    public UserModel getUserByToken() throws BusinessException{
+        String token = httpServletRequest.getHeader("Authorization");
+        if (StringUtils.isEmpty(token)) {
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN, "illegal user");
+        }
+
+        UserModel userModel = (UserModel) redisTemplate.opsForValue().get(token);
+        if (userModel == null) {
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN);
+        }
+        return userModel;
+    }
+
+    @Override
+    public HashMap<String,String> setWantRead(Long bookId) throws BusinessException{
+        HashMap<String,String> ret = new HashMap<String,String>();
+        UserModel user = getUserByToken();
+        Long userID = user.getUserId();
+        UserWantReadDO want = userWantReadDOMapper.selectByPrimaryKey(userID);
+        List<String> wantList = Arrays.asList(want.getBooks().split(","));
+        String newWant = "";
+        boolean found = false;
+        String message;
+        for(String s : wantList){
+            if(s.equals("")){
+                continue;
+            }
+            if(!s.equals(Long.toString(bookId))){
+                newWant += s + ",";
+            }else{
+                found = true;
+            }
+        }
+        if(found){
+            //说明之前就有，要取消
+            message = "Delete success.";
+            if(newWant.length() > 0)
+                newWant = newWant.substring(0, newWant.length() - 1);
+        }else{
+            //加上
+            message = "Add success.";
+            newWant += Long.toString(bookId);
+        }
+        ret.put("message",message);
+        want.setBooks(newWant);
+        userWantReadDOMapper.updateByPrimaryKey(want);
+        return ret;
+    }
+
+    @Override
+    public HashMap<String,String> setHasRead(Long bookId) throws BusinessException{
+        HashMap<String,String> ret = new HashMap<String,String>();
+        UserModel user = getUserByToken();
+        Long userID = user.getUserId();
+        UserHasReadDO has = userHasReadDOMapper.selectByPrimaryKey(userID);
+        List<String> hasList = Arrays.asList(has.getBooks().split(","));
+        String newHas = "";
+        boolean found = false;
+        String message;
+        for(String s : hasList){
+            if(s.equals("")){
+                continue;
+            }
+            if(!s.equals(Long.toString(bookId))){
+                newHas += s + ",";
+            }else{
+                found = true;
+            }
+        }
+        if(found){
+            //说明之前就有，要取消
+            message = "Delete success.";
+            if(newHas.length() > 0)
+                newHas = newHas.substring(0, newHas.length() - 1);
+        }else{
+            //加上
+            message = "Add success.";
+            newHas += Long.toString(bookId);
+        }
+        ret.put("message",message);
+        has.setBooks(newHas);
+        userHasReadDOMapper.updateByPrimaryKey(has);
+        return ret;
     }
 }

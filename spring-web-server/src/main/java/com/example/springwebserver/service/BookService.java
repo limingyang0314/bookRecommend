@@ -3,11 +3,14 @@ package com.example.springwebserver.service;
 
 import com.example.springwebserver.dataObject.BookDO;
 import com.example.springwebserver.exception.BusinessException;
+import com.example.springwebserver.response.CommonReturnType;
 import com.example.springwebserver.service.model.BookModel;
 import com.github.pagehelper.Page;
 import com.mysql.cj.QueryResult;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface BookService {
@@ -29,6 +32,8 @@ public interface BookService {
     List<BookModel> listBookByBookIDSet(List<String> books);
 
     List<BookModel> listBookByHotRank(int page, int size);
+
+    HashMap<String,String> ratingBook(Long bookId, double ratingNum) throws BusinessException;
 
 
     BookModel convertModelFromDO(BookDO bookDO);
