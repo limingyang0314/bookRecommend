@@ -1,6 +1,10 @@
 package com.example.springwebserver.controller;
 
 import com.example.springwebserver.controller.viewObject.UserVO;
+import com.example.springwebserver.dao.UserHasReadDOMapper;
+import com.example.springwebserver.dao.UserWantReadDOMapper;
+import com.example.springwebserver.dataObject.UserHasReadDO;
+import com.example.springwebserver.dataObject.UserWantReadDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
@@ -23,9 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Controller("user")
@@ -44,6 +46,12 @@ public class UserController extends GlobalExceptionHandler {
 
     @Autowired
     private UserCenterService userCenterService;
+
+    @Autowired
+    private UserWantReadDOMapper userWantReadDOMapper;
+
+    @Autowired
+    private UserHasReadDOMapper userHasReadDOMapper;
 
 
     @ApiOperation("根据 id 获取用户")
@@ -143,21 +151,86 @@ public class UserController extends GlobalExceptionHandler {
     @ApiOperation("设为想读/取消想读")
     @GetMapping(value = "/wantRead")
     @ResponseBody
-    public CommonReturnType setWantRead(@RequestParam(name = "bookID") long userID){
+    public CommonReturnType setWantRead(@RequestParam(name = "bookID") long bookID) throws BusinessException{
         //String token = httpServletRequest.getHeader("Authorization");
         //UserCenterModel ret = userCenterService.getUserCenterByUserID(userID);
-        Object ret = null;
+        HashMap<String,String> ret = new HashMap<String,String>();
+        UserModel user = getUserByToken();
+        Long userID = user.getUserId();
+        UserWantReadDO want = userWantReadDOMapper.selectByPrimaryKey(userID);
+        List<String> wantList = Arrays.asList(want.getBooks().split(","));
+        String newWant = "";
+        boolean found = false;
+        String message;
+        for(String s : wantList){
+            if(s != Long.toString(bookID)){
+                newWant += s + ",";
+            }else{
+                found = true;
+            }
+        }
+        if(found){
+            //说明之前就有，要取消
+            message = "Delete success.";
+            if(newWant.length() > 0)
+                newWant = newWant.substring(0, newWant.length() - 1);
+        }else{
+            //加上
+            message = "Add success.";
+            newWant += Long.toString(bookID);
+        }
+        ret.put("message",message);
+        want.setBooks(newWant);
+        userWantReadDOMapper.updateByPrimaryKey(want);
         return CommonReturnType.create(ret);
     }
 
     @ApiOperation("设为已读/取消已读")
     @GetMapping(value = "/hasRead")
     @ResponseBody
-    public CommonReturnType setHasRead(@RequestParam(name = "bookID") long userID){
-        //String token = httpServletRequest.getHeader("Authorization");
-        //UserCenterModel ret = userCenterService.getUserCenterByUserID(userID);
-        Object ret = null;
+    public CommonReturnType setHasRead(@RequestParam(name = "bookID") long bookID) throws BusinessException{
+        HashMap<String,String> ret = new HashMap<String,String>();
+        UserModel user = getUserByToken();
+        Long userID = user.getUserId();
+        UserHasReadDO has = userHasReadDOMapper.selectByPrimaryKey(userID);
+        List<String> hasList = Arrays.asList(has.getBooks().split(","));
+        String newHas = "";
+        boolean found = false;
+        String message;
+        for(String s : hasList){
+            if(s != Long.toString(bookID)){
+                newHas += s + ",";
+            }else{
+                found = true;
+            }
+        }
+        if(found){
+            //说明之前就有，要取消
+            message = "Delete success.";
+            if(newHas.length() > 0)
+                newHas = newHas.substring(0, newHas.length() - 1);
+        }else{
+            //加上
+            message = "Add success.";
+            newHas += Long.toString(bookID);
+        }
+        ret.put("message",message);
+        has.setBooks(newHas);
+        userHasReadDOMapper.updateByPrimaryKey(has);
         return CommonReturnType.create(ret);
+    }
+
+    public UserModel getUserByToken() throws BusinessException{
+        String token = httpServletRequest.getHeader("Authorization");
+        if (StringUtils.isEmpty(token)) {
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN, "illegal user");
+        }
+
+        UserModel userModel = (UserModel) redisTemplate.opsForValue().get(token);
+        if (userModel == null) {
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN);
+        }
+        return userModel;
     }
 
 }
