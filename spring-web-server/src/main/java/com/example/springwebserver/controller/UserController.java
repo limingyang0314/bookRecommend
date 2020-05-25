@@ -163,7 +163,10 @@ public class UserController extends GlobalExceptionHandler {
         boolean found = false;
         String message;
         for(String s : wantList){
-            if(s != Long.toString(bookID)){
+            if(s.equals("")){
+                continue;
+            }
+            if(!s.equals(Long.toString(bookID))){
                 newWant += s + ",";
             }else{
                 found = true;
@@ -198,7 +201,10 @@ public class UserController extends GlobalExceptionHandler {
         boolean found = false;
         String message;
         for(String s : hasList){
-            if(s != Long.toString(bookID)){
+            if(s.equals("")){
+                continue;
+            }
+            if(!s.equals(Long.toString(bookID))){
                 newHas += s + ",";
             }else{
                 found = true;
