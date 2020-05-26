@@ -131,7 +131,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public HashMap<String,String> ratingBook(Long bookId,double ratingNum) throws BusinessException {
+    public HashMap<String,String> ratingBook(Long bookId, double ratingNum) throws BusinessException {
         UserModel user = userService.getUserByToken();
         RatingDOKey key = new RatingDOKey();
         key.setBookId(bookId);
@@ -151,7 +151,7 @@ public class BookServiceImpl implements BookService {
             ratingDOMapper.updateByPrimaryKey(rating);
             message = "Update rating success.";
         }
-        HashMap<String ,String> ret = new HashMap<String ,String>();
+        HashMap<String ,String> ret = new HashMap<>();
         ret.put("message",message);
         return ret;
     }

@@ -127,6 +127,7 @@ public class UserController extends GlobalExceptionHandler {
 
         redisTemplate.opsForValue().set(uuidToken, userModel);
         redisTemplate.expire(uuidToken, 1, TimeUnit.HOURS);
+        userModel.setEncryptPassword(null);
 
         Map<String, Object> map = new HashMap<>();
         map.put("token", uuidToken);

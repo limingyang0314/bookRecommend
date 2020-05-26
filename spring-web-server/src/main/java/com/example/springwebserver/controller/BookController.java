@@ -108,10 +108,10 @@ public class BookController extends GlobalExceptionHandler {
     }
 
     @ApiOperation("评分或修改评分")
-    @GetMapping("/rating")
+    @PostMapping("/rating")
     @ResponseBody
     public CommonReturnType ratingBook(@RequestParam(name = "bookID") long bookId,@RequestParam(name = "rating") double ratingNum) throws BusinessException {
-        HashMap<String,String> ret = bookService.ratingBook(bookId,ratingNum);
+        HashMap<String,String> ret = bookService.ratingBook(bookId, ratingNum);
         return CommonReturnType.create(ret);
     }
 
