@@ -145,6 +145,13 @@
                 <configuration>
                     <mainClass>com.example.springwebserver.SpringWebServerApplication</mainClass>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
