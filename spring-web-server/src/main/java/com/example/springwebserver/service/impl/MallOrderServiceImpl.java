@@ -51,11 +51,11 @@ public class MallOrderServiceImpl implements MallOrderService {
         return null;
     }
 
-    @Override
-    public String saveOrder(UserVO user, List<MallShoppingCartItemVO> myShoppingCartItems) {
-        
-        return null;
-    }
+//    @Override
+//    public String saveOrder(UserVO user, List<MallShoppingCartItemVO> myShoppingCartItems) {
+//
+//        return null;
+//    }
 
     @Override
     public MallOrderDetailVO getOrderDetailByOrderNo(String orderNo) {

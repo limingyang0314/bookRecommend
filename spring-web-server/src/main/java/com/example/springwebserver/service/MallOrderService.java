@@ -3,7 +3,7 @@ package com.example.springwebserver.service;
 //import com.example.demodeal.domain.Goods;
 import com.example.springwebserver.controller.viewObject.MallOrderDetailVO;
 import com.example.springwebserver.controller.viewObject.MallOrderItemVO;
-import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
+//import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
 import com.example.springwebserver.controller.viewObject.UserVO;
 import com.example.springwebserver.dataObject.MallOrderDO;
 import com.example.springwebserver.util.PageQueryUtil;
@@ -63,7 +63,7 @@ public interface MallOrderService {
      * @param myShoppingCartItems
      * @return
      */
-    String saveOrder(UserVO user, List<MallShoppingCartItemVO> myShoppingCartItems);
+//    String saveOrder(UserVO user, List<MallShoppingCartItemVO> myShoppingCartItems);
 
     /**
      * 获取订单详情

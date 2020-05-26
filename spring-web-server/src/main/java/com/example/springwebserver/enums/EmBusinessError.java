@@ -21,7 +21,10 @@ public enum EmBusinessError implements CommonError {
     RATELIMIT(303, "the requests are too much, please try it latter"),
     ITEM_NOT_EXIT(304, "book not exit"),
     BOOK_DATA_FORMAT_ERROR(305, "transform error occur, when transform DO to model"),
-    BOOK_NOT_EXIST(306, "book not exist");
+    BOOK_NOT_EXIST(306, "book not exist"),
+    ORDER_CLOSED_BY_MALLUSER(307,"order is closed by user"),
+    ORDER_NOT_EXIST(308,"order not exist"),
+    MYORDER_NOT_EXIST(309,"there is no order in history");
 
 
     EmBusinessError(int errCode, String errMsg){

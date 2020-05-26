@@ -5,7 +5,6 @@ import org.springframework.util.StringUtils;
 /**
  * 响应结果生成工具
  *
-
  */
 public class ResultGenerator {
     private static final String DEFAULT_SUCCESS_MESSAGE = "SUCCESS";

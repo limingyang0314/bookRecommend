@@ -1,10 +1,10 @@
 package com.example.springwebserver.controller;
 
 import com.example.springwebserver.controller.viewObject.MallOrderDetailVO;
-import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
+//import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
 import com.example.springwebserver.controller.viewObject.UserVO;
 import com.example.springwebserver.enums.EmBusinessError;
-import com.example.springwebserver.enums.MallException;
+//import com.example.springwebserver.enums.MallException;
 import com.example.springwebserver.enums.ServiceResultEnum;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
@@ -74,24 +74,7 @@ public class MallOrderController {
         }
         return CommonReturnType.create(pageResult);
     }
-//    @GetMapping("/createOrder")
-//    public String saveOrder(@RequestParam (name = "userid") String userid) {
-////        MallUserVO user = (MallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-//        List<MallShoppingCartItemVO> myShoppingCartItems = MallShoppingCartService.getMyShoppingCartItems(userid);
-//        //todo 处理收获地址
-////        if (StringUtils.isEmpty(user.getAddress().trim())) {
-////            //无收货地址
-////            MallException.fail(ServiceResultEnum.NULL_ADDRESS_ERROR.getResult());
-////        }
-//        if (CollectionUtils.isEmpty(myShoppingCartItems)) {
-//            //购物车中无数据则跳转至错误页
-//            MallException.fail(ServiceResultEnum.SHOPPING_ITEM_ERROR.getResult());
-//        }
-//        //保存订单并返回订单号
-//        String saveOrderResult = MallOrderService.saveOrder(user, myShoppingCartItems);
-//        //跳转到订单详情页
-//        return "redirect:/orders/" + saveOrderResult;
-//    }
+
     @ApiOperation("取消订单")
     @GetMapping("/orders/cancel")
     @ResponseBody
