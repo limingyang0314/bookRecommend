@@ -35,6 +35,9 @@ public interface BookService {
 
     HashMap<String,String> ratingBook(Long bookId, double ratingNum) throws BusinessException;
 
+    boolean isWantRead(Long userId,Long bookId) throws BusinessException;
+
+    boolean isHasRead(Long userId,Long bookId) throws BusinessException;
 
     BookModel convertModelFromDO(BookDO bookDO);
 

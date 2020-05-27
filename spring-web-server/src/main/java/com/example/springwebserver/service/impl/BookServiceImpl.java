@@ -45,6 +45,9 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private BookService bookService;
+
     //@Autowired
     private BookDO bookDO;
 
@@ -59,6 +62,7 @@ public class BookServiceImpl implements BookService {
 
     @Autowired
     private UserHasReadDOMapper userHasReadDOMapper;
+
 
     @Override
     public BookModel getBookById(Long book) {
@@ -151,6 +155,9 @@ public class BookServiceImpl implements BookService {
             ratingDOMapper.updateByPrimaryKey(rating);
             message = "Update rating success.";
         }
+        if(!bookService.isHasRead(user.getUserId(),bookId)){
+            userService.setHasRead(bookId);
+        }
         HashMap<String ,String> ret = new HashMap<>();
         ret.put("message",message);
         return ret;
@@ -209,6 +216,46 @@ public class BookServiceImpl implements BookService {
 
         return bookModel;
     }
+
+    @Override
+    public boolean isWantRead(Long userId,Long bookId) throws BusinessException{
+        UserModel user = userService.getUserById(userId);
+        Long userID = user.getUserId();
+        UserWantReadDO want = userWantReadDOMapper.selectByPrimaryKey(userID);
+        List<String> wantList = Arrays.asList(want.getBooks().split(","));
+        boolean found = false;
+        for(String s : wantList){
+            if(s.equals("")){
+                continue;
+            }
+            if(s.equals(Long.toString(bookId))){
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    @Override
+    public boolean isHasRead(Long userId,Long bookId) throws BusinessException{
+        UserModel user = userService.getUserById(userId);
+        Long userID = user.getUserId();
+        UserHasReadDO has = userHasReadDOMapper.selectByPrimaryKey(userID);
+        List<String> hasList = Arrays.asList(has.getBooks().split(","));
+        boolean found = false;
+        for(String s : hasList){
+            if(s.equals("")){
+                continue;
+            }
+            if(s.equals(Long.toString(bookId))){
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+
 
 
 

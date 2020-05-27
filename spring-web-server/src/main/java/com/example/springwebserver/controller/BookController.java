@@ -1,5 +1,6 @@
 package com.example.springwebserver.controller;
 
+import com.example.springwebserver.controller.viewObject.BookVO;
 import com.example.springwebserver.dao.RatingDOMapper;
 import com.example.springwebserver.dataObject.RatingDO;
 import com.example.springwebserver.dataObject.RatingDOKey;
@@ -14,6 +15,7 @@ import com.mysql.cj.QueryResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -104,7 +106,12 @@ public class BookController extends GlobalExceptionHandler {
             log.warn("==== [get book] ==== book not exit");
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
         }
-        return CommonReturnType.create(data);
+        BookVO vo = new BookVO();
+        BeanUtils.copyProperties(data,vo);
+        UserModel user = userService.getUserByToken();
+        vo.setHasRead(bookService.isHasRead(user.getUserId(),bookId));
+        vo.setWantRead(bookService.isWantRead(user.getUserId(),bookId));
+        return CommonReturnType.create(vo);
     }
 
     @ApiOperation("评分或修改评分")
