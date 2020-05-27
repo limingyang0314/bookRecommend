@@ -32,3 +32,4 @@ build/
 
 spark/ALSRecall/
 spark/Item2ItemRecall/
+spring-web-server/target/
