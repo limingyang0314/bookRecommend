@@ -8,8 +8,10 @@ import com.example.springwebserver.dataObject.UserWantReadDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
+import com.example.springwebserver.service.SearchService;
 import com.example.springwebserver.service.UserCenterService;
 import com.example.springwebserver.service.UserService;
+import com.example.springwebserver.service.model.BookModel;
 import com.example.springwebserver.service.model.UserCenterModel;
 import com.example.springwebserver.service.model.UserModel;
 import io.swagger.annotations.Api;
@@ -35,5 +37,17 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Api(tags = "搜索相关接口", value = "提供搜索相关的 Rest API")
 public class SearchController extends GlobalExceptionHandler {
+    @Autowired
+    private SearchService searchService;
+
+    @ApiOperation("根据书名、作者、ISBN搜索")
+    @GetMapping("")
+    @ResponseBody
+    public CommonReturnType searchByKey(@RequestParam(name = "key") String key,
+                                        @RequestParam(name = "page") int page,
+                                        @RequestParam(name = "size") int size){
+        List<BookModel> data = searchService.searchByKey(key,page,size);
+        return CommonReturnType.create(data);
+    }
 
 }
