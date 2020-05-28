@@ -6,13 +6,26 @@ import lombok.Data;
 import org.joda.time.DateTime;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
 
 @Data
 @ApiModel("图书实体")
-public class BookVO {
+public class BookVO implements Serializable {
+
+    @Data
+    public static class Seller implements Serializable {
+        String place;
+        BigDecimal price;
+
+        public Seller(String place, BigDecimal price) {
+            this.place = place;
+            this.price = price;
+        }
+    }
+
     private Long bookId;
 
     private String isbn;
@@ -37,11 +50,17 @@ public class BookVO {
 
     private BigDecimal price;
 
-    private List<String> sellerlist;
+    private List<Seller> sellerlist;
 
     private String coverUrl;
 
     private String description;
 
-    private Integer rating;
+    private double rating;
+
+    private boolean hasRead = false;
+
+    private boolean wantRead = false;
+
+    private double myRating = 0;
 }

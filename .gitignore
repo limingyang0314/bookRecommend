@@ -30,4 +30,10 @@ build/
 ### VS Code ###
 .vscode/
 
+<<<<<<< HEAD
 model/
+=======
+spark/ALSRecall/
+spark/Item2ItemRecall/
+spring-web-server/target/
+>>>>>>> a705d1aae86802bfa958b83be500708ef2c11f38

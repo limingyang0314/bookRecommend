@@ -72,6 +72,8 @@ public class BookModel implements Serializable {
     @NotNull(message = "rating can't be blank")
     @Min(value = 0, message = "rating can't less than 0")
     @Max(value = 10, message = "rating can't large than 10")
-    private Integer rating;
+    private double rating;
+
+
 
 }

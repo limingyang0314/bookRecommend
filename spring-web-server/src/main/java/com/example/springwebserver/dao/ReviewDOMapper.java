@@ -1,6 +1,7 @@
 package com.example.springwebserver.dao;
 
 import com.example.springwebserver.dataObject.ReviewDO;
+import com.github.pagehelper.Page;
 
 import java.util.List;
 
@@ -54,4 +55,10 @@ public interface ReviewDOMapper {
     int updateByPrimaryKey(ReviewDO record);
 
     List<ReviewDO> listReviewByUserID(Long userID);
+
+    Page<ReviewDO> listReviewByBookID(Long bookId);
+
+    Page<ReviewDO> listReviewByBookIDDescByReviewTime(Long bookId);
+
+    Page<ReviewDO> listReviewByBookIDDescByAgreeNum(Long bookId);
 }
