@@ -67,19 +67,7 @@ public class ReviewController {
     @PostMapping("delete")
     @ResponseBody
     public CommonReturnType delReview(@RequestParam(name = "reviewId") Long reviewId) throws BusinessException {
-        UserModel user = userService.getUserByToken();
-        ReviewDO review = reviewDOMapper.selectByPrimaryKey(reviewId);
-        String message;
-        if(review == null || !review.getUserId().equals(user.getUserId())){
-            System.out.println(review.getUserId() + "," + user.getUserId());
-            throw new BusinessException(EmBusinessError.REVIEW_NOT_EXIST);
-            //message = "Failed.";
-        }else{
-            reviewDOMapper.deleteByPrimaryKey(reviewId);
-            message = "Success.";
-        }
-        HashMap<String,String> ret = new HashMap<String,String>();
-        ret.put("message",message);
+        HashMap<String,String> ret = reviewService.delReview(reviewId);
         return CommonReturnType.create(ret);
     }
 
@@ -87,37 +75,7 @@ public class ReviewController {
     @PostMapping("agree")
     @ResponseBody
     public CommonReturnType agreeReview(@RequestParam(name = "reviewId") Long reviewId) throws BusinessException {
-        //System.out.println("reviewID:" + reviewId);
-        ReviewAgreeLogDOKey key = new ReviewAgreeLogDOKey();
-        UserModel user = userService.getUserByToken();
-        key.setUserId(user.getUserId());
-        key.setReviewId(reviewId);
-        ReviewAgreeLogDO data = reviewAgreeLogDOMapper.selectByPrimaryKey(key);
-        String message;
-        //System.out.println("reviewID:" + reviewId);
-        ReviewDO review = reviewDOMapper.selectByPrimaryKey(reviewId);//先把评论取出来，之后对赞同数++ --
-        if(review == null){
-            //System.out.println("reviewID:" + reviewId);
-            throw new BusinessException(EmBusinessError.REVIEW_NOT_EXIST);
-        }
-        if(data == null){
-            //没赞同过，赞同
-            data = new ReviewAgreeLogDO();
-            data.setReviewId(reviewId);
-            data.setUserId(user.getUserId());
-            reviewAgreeLogDOMapper.insertSelective(data);
-            review.setAgreeNumber(review.getAgreeNumber() + 1);
-            reviewDOMapper.updateByPrimaryKeySelective(review);
-            message = "Agree success.";
-        }else{
-            //赞同了，取消
-            reviewAgreeLogDOMapper.deleteByPrimaryKey(data);
-            review.setAgreeNumber(Math.max(review.getAgreeNumber() - 1,0));
-            reviewDOMapper.updateByPrimaryKeySelective(review);
-            message = "Disagree success.";
-        }
-        HashMap<String,String> ret = new HashMap<String,String>();
-        ret.put("message",message);
+        HashMap<String,String> ret = reviewService.agreeReview(reviewId);
         return CommonReturnType.create(ret);
     }
 
@@ -127,33 +85,7 @@ public class ReviewController {
     public CommonReturnType getReviewByBookIdDescAgreeNum(@RequestParam(name = "bookId") Long bookId,
                                               @RequestParam(name = "page") int page,
                                               @RequestParam(name = "size") int size) throws BusinessException {
-        PageHelper.startPage(page, size);
-        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookIDDescByAgreeNum(bookId);
-        List<ReviewDO> reviewList = reviewPage.getResult();
-
-        List<ReviewVO> ret = new ArrayList<ReviewVO>();
-
-        boolean login = userService.isLoginUser();
-        UserModel user = new UserModel();
-        if(login){
-            user = userService.getUserByToken();
-        }
-        ReviewAgreeLogDOKey key = new ReviewAgreeLogDOKey();
-        for(ReviewDO one: reviewList){
-            ReviewVO temp = new ReviewVO();
-            BeanUtils.copyProperties(one,temp);
-            if(login){
-                key.setReviewId(one.getReviewId());
-                key.setUserId(user.getUserId());
-                if(reviewAgreeLogDOMapper.selectByPrimaryKey(key) != null)
-                    temp.setHasAgree(true);
-                else
-                    temp.setHasAgree(false);
-            }else{
-                temp.setHasAgree(false);
-            }
-            ret.add(temp);
-        }
+        List<ReviewVO> ret = reviewService.getReviewByBookIdDescByAgreeNum(bookId,page,size);
         return CommonReturnType.create(ret);
     }
 
@@ -163,33 +95,7 @@ public class ReviewController {
     public CommonReturnType getReviewByBookIdDescByTime(@RequestParam(name = "bookId") Long bookId,
                                               @RequestParam(name = "page") int page,
                                               @RequestParam(name = "size") int size) throws BusinessException {
-        PageHelper.startPage(page, size);
-        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookIDDescByReviewTime(bookId);
-        List<ReviewDO> reviewList = reviewPage.getResult();
-
-        List<ReviewVO> ret = new ArrayList<ReviewVO>();
-
-        boolean login = userService.isLoginUser();
-        UserModel user = new UserModel();
-        if(login){
-            user = userService.getUserByToken();
-        }
-        ReviewAgreeLogDOKey key = new ReviewAgreeLogDOKey();
-        for(ReviewDO one: reviewList){
-            ReviewVO temp = new ReviewVO();
-            BeanUtils.copyProperties(one,temp);
-            if(login){
-                key.setReviewId(one.getReviewId());
-                key.setUserId(user.getUserId());
-                if(reviewAgreeLogDOMapper.selectByPrimaryKey(key) != null)
-                    temp.setHasAgree(true);
-                else
-                    temp.setHasAgree(false);
-            }else{
-                temp.setHasAgree(false);
-            }
-            ret.add(temp);
-        }
+        List<ReviewVO> ret = reviewService.getReviewByBookIdDescByTime(bookId,page,size);
         return CommonReturnType.create(ret);
     }
 
