@@ -13,8 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>ALSRecall</module>
-        <module>Item2ItemRecall</module>
+        <module>Recall</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -62,6 +61,12 @@
                 <groupId>org.apache.hbase</groupId>
                 <artifactId>hbase-mapreduce</artifactId>
                 <version>${hbase.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector.artifactId}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -28,7 +28,7 @@
 
     <properties>
         <java.version>1.8</java.version>
-        <mysql-connector.artifactId>8.0.19</mysql-connector.artifactId>
+
     </properties>
 
     <dependencies>
