@@ -2,6 +2,7 @@ package com.example.springwebserver.service;
 
 import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
 import com.example.springwebserver.dataObject.MallShoppingCartItemDO;
+import com.example.springwebserver.exception.BusinessException;
 import io.lettuce.core.dynamic.annotation.Param;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public interface MallShoppingCartService {
      * @param MallShoppingCartItem
      * @return
      */
-    String saveMallCartItem(MallShoppingCartItemDO MallShoppingCartItem);
+    MallShoppingCartItemVO saveMallCartItem(MallShoppingCartItemDO MallShoppingCartItem) ;
 
     /**
      * 修改购物车中的属性
@@ -46,4 +47,6 @@ public interface MallShoppingCartService {
      * @return
      */
     List<MallShoppingCartItemVO> getMyShoppingCartItems( Long MallUserId);
+    List<MallShoppingCartItemDO> getMallCartItemById(List<Long> itemIds);
+    List<MallShoppingCartItemVO> saveMallCartItems(List<MallShoppingCartItemDO> mallShoppingCartItems) ;
 }

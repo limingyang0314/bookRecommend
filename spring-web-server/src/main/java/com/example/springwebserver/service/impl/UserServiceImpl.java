@@ -151,7 +151,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserModel getUserByToken() throws BusinessException{
+
         String token = httpServletRequest.getHeader("Authorization");
+        System.out.println("token :" +token);
         if (StringUtils.isEmpty(token)) {
             throw new BusinessException(EmBusinessError.USER_NOT_LOGIN, "illegal user");
         }
