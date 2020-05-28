@@ -134,19 +134,27 @@ public class ReviewController {
         List<ReviewVO> ret = new ArrayList<ReviewVO>();
 
         boolean login = userService.isLoginUser();
+        UserModel user = new UserModel();
         if(login){
-            UserModel user = userService.getUserByToken();
+            user = userService.getUserByToken();
         }
+        ReviewAgreeLogDOKey key = new ReviewAgreeLogDOKey();
         for(ReviewDO one: reviewList){
             ReviewVO temp = new ReviewVO();
             BeanUtils.copyProperties(one,temp);
             if(login){
-                temp.setHasAgree();
-                //System.out.println("fuck");
+                key.setReviewId(one.getReviewId());
+                key.setUserId(user.getUserId());
+                if(reviewAgreeLogDOMapper.selectByPrimaryKey(key) != null)
+                    temp.setHasAgree(true);
+                else
+                    temp.setHasAgree(false);
+            }else{
+                temp.setHasAgree(false);
             }
             ret.add(temp);
         }
-        return CommonReturnType.create(reviewList);
+        return CommonReturnType.create(ret);
     }
 
     @ApiOperation("分页获取某图书的书评(评论时间降序)")
@@ -156,25 +164,33 @@ public class ReviewController {
                                               @RequestParam(name = "page") int page,
                                               @RequestParam(name = "size") int size) throws BusinessException {
         PageHelper.startPage(page, size);
-        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookIDDescByAgreeNum(bookId);
+        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookIDDescByReviewTime(bookId);
         List<ReviewDO> reviewList = reviewPage.getResult();
 
         List<ReviewVO> ret = new ArrayList<ReviewVO>();
 
         boolean login = userService.isLoginUser();
+        UserModel user = new UserModel();
         if(login){
-            UserModel user = userService.getUserByToken();
+            user = userService.getUserByToken();
         }
+        ReviewAgreeLogDOKey key = new ReviewAgreeLogDOKey();
         for(ReviewDO one: reviewList){
             ReviewVO temp = new ReviewVO();
             BeanUtils.copyProperties(one,temp);
             if(login){
-                temp.setHasAgree();
-                //System.out.println("fuck");
+                key.setReviewId(one.getReviewId());
+                key.setUserId(user.getUserId());
+                if(reviewAgreeLogDOMapper.selectByPrimaryKey(key) != null)
+                    temp.setHasAgree(true);
+                else
+                    temp.setHasAgree(false);
+            }else{
+                temp.setHasAgree(false);
             }
             ret.add(temp);
         }
-        return CommonReturnType.create(reviewList);
+        return CommonReturnType.create(ret);
     }
 
 

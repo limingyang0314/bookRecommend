@@ -63,6 +63,12 @@ public class BookServiceImpl implements BookService {
     @Autowired
     private UserHasReadDOMapper userHasReadDOMapper;
 
+    @Autowired
+    private AuthorDOMapper authorDOMapper;
+
+    @Autowired
+    private CountryDOMapper countryDOMapper;
+
 
     @Override
     public BookModel getBookById(Long book) {
@@ -173,6 +179,10 @@ public class BookServiceImpl implements BookService {
         BookModel bookModel = new BookModel();
         BeanUtils.copyProperties(bookDO, bookModel);
         bookModel.setPrice(BigDecimal.valueOf(bookDO.getPrice()));
+        String authorName = authorDOMapper.selectByPrimaryKey(bookModel.getAuthorId()).getAuthorName();
+        String countryName = countryDOMapper.selectByPrimaryKey(bookModel.getCountryId()).getCountryName();
+        bookModel.setAuthorName(authorName);
+        bookModel.setCountryName(countryName);
         if (!StringUtils.isEmpty(bookDO.getTagIds())) {
             String[] tagIds = bookDO.getTagIds().split(",");
             bookModel.setTagIds(Arrays.asList(tagIds));

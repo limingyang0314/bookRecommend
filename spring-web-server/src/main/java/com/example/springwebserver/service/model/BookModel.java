@@ -74,6 +74,10 @@ public class BookModel implements Serializable {
     @Max(value = 10, message = "rating can't large than 10")
     private double rating;
 
+    private String authorName;
+
+    private String countryName;
+
 
 
 }

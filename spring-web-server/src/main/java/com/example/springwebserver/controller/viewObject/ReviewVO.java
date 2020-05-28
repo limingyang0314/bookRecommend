@@ -3,15 +3,16 @@ package com.example.springwebserver.controller.viewObject;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
 @ApiModel("评论实体")
-public class ReviewVO {
+public class ReviewVO implements Serializable {
     private boolean hasAgree = false;
 
-    public void setHasAgree(){
-        hasAgree = true;
+    public void setHasAgree(boolean agree){
+        hasAgree = agree;
     }
     /**
      *

@@ -38,6 +38,10 @@ public class BookVO implements Serializable {
 
     private Integer countryId;
 
+    private String authorName;
+
+    private String countryName;
+
     private String publisher;
 
     private String publishedPlace;

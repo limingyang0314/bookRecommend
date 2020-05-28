@@ -17,6 +17,7 @@
     <result column="review_time" jdbcType="TIMESTAMP" property="reviewTime" />
     <result column="book_name" jdbcType="VARCHAR" property="bookName" />
     <result column="cover_url" jdbcType="VARCHAR" property="coverUrl" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--
@@ -200,8 +201,8 @@
       This element was generated on Wed May 20 19:20:45 CST 2020.
     -->
     select
-    R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id
-    from reviews R,books B WHERE B.book_ID = R.book_ID AND R.book_ID = #{bookId} ORDER BY R.agree_number DESC
+    R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id,U.user_name
+    from reviews R,books B,users U WHERE B.book_ID = R.book_ID AND U.user_id = R.user_id AND R.book_ID = #{bookId} ORDER BY R.agree_number DESC
     <!--    select-->
     <!--    <include refid="Base_Column_List" />-->
     <!--    from reviews-->
@@ -215,8 +216,8 @@
       This element was generated on Wed May 20 19:20:45 CST 2020.
     -->
     select
-    R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id
-    from reviews R,books B WHERE B.book_ID = R.book_ID AND R.book_ID = #{bookId} ORDER BY R.review_time DESC
+    R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id,U.user_name
+    from reviews R,books B,users U WHERE B.book_ID = R.book_ID AND U.user_id = R.user_id AND R.book_ID = #{bookId} ORDER BY R.review_time DESC
     <!--    select-->
     <!--    <include refid="Base_Column_List" />-->
     <!--    from reviews-->
