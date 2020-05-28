@@ -20,6 +20,7 @@ import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -120,23 +121,58 @@ public class ReviewController {
         return CommonReturnType.create(ret);
     }
 
-    @ApiOperation("分页获取某图书的书评")
-    @PostMapping("book")
+    @ApiOperation("分页获取某图书的书评(赞同人数降序)")
+    @PostMapping("book/agreeNum")
     @ResponseBody
-    public CommonReturnType getReviewByBookId(@RequestParam(name = "bookId") Long bookId,
+    public CommonReturnType getReviewByBookIdDescAgreeNum(@RequestParam(name = "bookId") Long bookId,
                                               @RequestParam(name = "page") int page,
                                               @RequestParam(name = "size") int size) throws BusinessException {
         PageHelper.startPage(page, size);
-        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookID(bookId);
+        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookIDDescByAgreeNum(bookId);
         List<ReviewDO> reviewList = reviewPage.getResult();
 
         List<ReviewVO> ret = new ArrayList<ReviewVO>();
 
         boolean login = userService.isLoginUser();
+        if(login){
+            UserModel user = userService.getUserByToken();
+        }
         for(ReviewDO one: reviewList){
+            ReviewVO temp = new ReviewVO();
+            BeanUtils.copyProperties(one,temp);
             if(login){
-                System.out.println("fuck");
+                temp.setHasAgree();
+                //System.out.println("fuck");
             }
+            ret.add(temp);
+        }
+        return CommonReturnType.create(reviewList);
+    }
+
+    @ApiOperation("分页获取某图书的书评(评论时间降序)")
+    @PostMapping("book/reviewTime")
+    @ResponseBody
+    public CommonReturnType getReviewByBookIdDescByTime(@RequestParam(name = "bookId") Long bookId,
+                                              @RequestParam(name = "page") int page,
+                                              @RequestParam(name = "size") int size) throws BusinessException {
+        PageHelper.startPage(page, size);
+        Page<ReviewDO> reviewPage = reviewDOMapper.listReviewByBookIDDescByAgreeNum(bookId);
+        List<ReviewDO> reviewList = reviewPage.getResult();
+
+        List<ReviewVO> ret = new ArrayList<ReviewVO>();
+
+        boolean login = userService.isLoginUser();
+        if(login){
+            UserModel user = userService.getUserByToken();
+        }
+        for(ReviewDO one: reviewList){
+            ReviewVO temp = new ReviewVO();
+            BeanUtils.copyProperties(one,temp);
+            if(login){
+                temp.setHasAgree();
+                //System.out.println("fuck");
+            }
+            ret.add(temp);
         }
         return CommonReturnType.create(reviewList);
     }

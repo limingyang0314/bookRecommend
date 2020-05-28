@@ -61,4 +61,6 @@ public class BookVO implements Serializable {
     private boolean hasRead = false;
 
     private boolean wantRead = false;
+
+    private double myRating = 0;
 }

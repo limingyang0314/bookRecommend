@@ -4,6 +4,7 @@ import com.example.springwebserver.controller.viewObject.BookVO;
 import com.example.springwebserver.dao.RatingDOMapper;
 import com.example.springwebserver.dataObject.RatingDO;
 import com.example.springwebserver.dataObject.RatingDOKey;
+import com.example.springwebserver.dataObject.ReviewAgreeLogDOKey;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
@@ -111,6 +112,12 @@ public class BookController extends GlobalExceptionHandler {
         UserModel user = userService.getUserByToken();
         vo.setHasRead(bookService.isHasRead(user.getUserId(),bookId));
         vo.setWantRead(bookService.isWantRead(user.getUserId(),bookId));
+        RatingDOKey key = new RatingDOKey();
+        key.setUserId(user.getUserId());
+        key.setBookId(bookId);
+        RatingDO temp = ratingDOMapper.selectByPrimaryKey(key);
+        double myStar = temp == null ? 0 : temp.getRating();
+        vo.setMyRating(myStar);
         return CommonReturnType.create(vo);
     }
 

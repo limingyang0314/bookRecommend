@@ -57,4 +57,8 @@ public interface ReviewDOMapper {
     List<ReviewDO> listReviewByUserID(Long userID);
 
     Page<ReviewDO> listReviewByBookID(Long bookId);
+
+    Page<ReviewDO> listReviewByBookIDDescByReviewTime(Long bookId);
+
+    Page<ReviewDO> listReviewByBookIDDescByAgreeNum(Long bookId);
 }
