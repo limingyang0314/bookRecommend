@@ -12,6 +12,8 @@ import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
 import com.example.springwebserver.dao.*;
 import com.example.springwebserver.dataObject.BookDO;
 import com.example.springwebserver.dataObject.MallShoppingCartItemDO;
+import com.example.springwebserver.enums.EmBusinessError;
+import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.MallShoppingCartService;
 import com.example.springwebserver.util.BeanUtil;
 import com.example.springwebserver.util.Constants;
@@ -36,14 +38,38 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     @Autowired
     private BookDOMapper bookDOMapper;
 
+
     @Override
-    public String saveMallCartItem(MallShoppingCartItemDO MallShoppingCartItem) {
+    public MallShoppingCartItemVO saveMallCartItem(MallShoppingCartItemDO mallShoppingCartItem)  {
+        MallShoppingCartItemVO mallShoppingCartItemVO = new MallShoppingCartItemVO();
+        BookDO bookDO = bookDOMapper.selectByPrimaryKey(mallShoppingCartItem.getGoodsId());
+        //保存记录
+        if (mallShoppingCartItemMapper.insertSelective(mallShoppingCartItem) > 0) {
+            BeanUtil.copyProperties(mallShoppingCartItem,mallShoppingCartItemVO);
+            return mallShoppingCartItemVO;
+        }
         return null;
     }
 
     @Override
-    public String updateMallCartItem(MallShoppingCartItemDO MallShoppingCartItem) {
-        return null;
+    public List<MallShoppingCartItemVO> saveMallCartItems(List<MallShoppingCartItemDO> mallShoppingCartItems) {
+        List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
+        for(MallShoppingCartItemDO mallShoppingCartItem :mallShoppingCartItems){
+            MallShoppingCartItemVO mallShoppingCartItemVO = saveMallCartItem(mallShoppingCartItem);
+            mallShoppingCartItemVOS.add(mallShoppingCartItemVO);
+        }
+        return mallShoppingCartItemVOS;
+    }
+
+    @Override
+    public MallShoppingCartItemDO updateMallCartItem(MallShoppingCartItemDO mallShoppingCartItem) throws BusinessException {
+        MallShoppingCartItemDO mallShoppingCartItemDOUpdate = mallShoppingCartItemMapper.selectByPrimaryKey(mallShoppingCartItem.getCartItemId());
+        mallShoppingCartItemDOUpdate.setGoodsCount(mallShoppingCartItem.getGoodsCount());
+        if(mallShoppingCartItemMapper.updateByPrimaryKeySelective(mallShoppingCartItemDOUpdate)>0){
+            return mallShoppingCartItemDOUpdate;
+        }
+        else
+            throw new BusinessException(EmBusinessError.DB_ERROR);
     }
 
     @Override
@@ -52,8 +78,9 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public Boolean deleteById(Long MallShoppingCartItemId) {
-        return null;
+    public Boolean deleteById(Long mallShoppingCartItemId) {
+
+        return mallShoppingCartItemMapper.deleteByPrimaryKey(mallShoppingCartItemId)>0;
     }
 
     @Override
@@ -86,6 +113,16 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
             }
         }
         return mallShoppingCartItemVOS;
+    }
+
+    @Override
+    public List<MallShoppingCartItemDO> getMallCartItemById(List<Long> itemIds) {
+        List<MallShoppingCartItemDO> mallShoppingCartItemDOS = new ArrayList<>();
+        for(Long itemid : itemIds){
+            MallShoppingCartItemDO mallShoppingCartItemDO = getMallCartItemById(itemid);
+            mallShoppingCartItemDOS.add(mallShoppingCartItemDO);
+        }
+        return mallShoppingCartItemDOS;
     }
 
     //todo 修改session中购物项数量

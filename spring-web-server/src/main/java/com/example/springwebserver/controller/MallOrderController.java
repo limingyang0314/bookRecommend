@@ -33,8 +33,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller("mall")
-@RequestMapping("/mall")
+@Controller("order")
+@RequestMapping("/order")
 @Slf4j
 @Api(tags = "订单相关接口", value = "提供订单相关的 Rest API")
 public class MallOrderController {
@@ -47,11 +47,11 @@ public class MallOrderController {
 
 
     @ApiOperation("根据订单编号获取订单详情")
-    @GetMapping("/orderdetail")
+    @GetMapping("/detail")
     @ResponseBody
     //HttpServletRequest request,
     public CommonReturnType orderDetailPage( @RequestParam(name = "orderNo") String orderNo) throws BusinessException {
-//        UserVO user = (UserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
+        UserModel user = userService.getUserByToken();
         MallOrderDetailVO orderDetailVO = MallOrderService.getOrderDetailByOrderNo(orderNo);
         if (orderDetailVO == null) {
             log.warn("==== [get order] ==== order not exit");
@@ -62,13 +62,12 @@ public class MallOrderController {
     }
 
     @ApiOperation("获取我的订单")
-    @GetMapping("/myorder")
+    @GetMapping("/history")
     @ResponseBody
-    public CommonReturnType orderListPage(@RequestParam Map<String, Object> params) throws BusinessException {
-        //todo 加入session用户验证
-//        UserVO user = (UserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        ;
-//        params.put("userId", 1);
+    public CommonReturnType orderListPage() throws BusinessException {
+        UserModel user = userService.getUserByToken();
+        Map<String, Object> params = new HashMap<>();
+        params.put("userId",user.getUserId());
         if (StringUtils.isEmpty(params.get("page"))) {
             params.put("page", 1);
         }
@@ -84,11 +83,11 @@ public class MallOrderController {
     }
 
     @ApiOperation("取消订单")
-    @GetMapping("/order/cancel")
+    @GetMapping("/cancel")
     @ResponseBody
-    public Result cancelOrder(@RequestParam (name = "userId") Long userId,@RequestParam (name = "orderNo") String orderNo) {
-//        MallUserVO user = (MallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        String cancelOrderResult = MallOrderService.cancelOrder(orderNo, userId);
+    public Result cancelOrder(@RequestParam (name = "orderNo") String orderNo) throws BusinessException {
+        UserModel user = userService.getUserByToken();
+        String cancelOrderResult = MallOrderService.cancelOrder(orderNo, user.getUserId());
         if (ServiceResultEnum.SUCCESS.getResult().equals(cancelOrderResult)) {
             return ResultGenerator.genSuccessResult();
         } else {
@@ -97,11 +96,11 @@ public class MallOrderController {
     }
 
     @ApiOperation("完成订单")
-    @PutMapping("/order/finish")
+    @PutMapping("/finish")
     @ResponseBody
-    public Result finishOrder(@RequestParam (name = "userId") Long userId,@RequestParam (name = "orderNo") String orderNo) {
-//        MallUserVO user = (MallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
-        String finishOrderResult = MallOrderService.finishOrder(orderNo, userId);
+    public Result finishOrder(@RequestParam (name = "orderNo") String orderNo) throws BusinessException {
+        UserModel user = userService.getUserByToken();
+        String finishOrderResult = MallOrderService.finishOrder(orderNo, user.getUserId());
         if (ServiceResultEnum.SUCCESS.getResult().equals(finishOrderResult)) {
             return ResultGenerator.genSuccessResult();
         } else {
@@ -110,12 +109,11 @@ public class MallOrderController {
     }
 
     @ApiOperation("下单")
-    @GetMapping("/createOrder")
+    @GetMapping("/create")
     @ResponseBody
-    public String saveOrder(@RequestParam (name = "userId") Long userId) throws BusinessException {
-        List<MallShoppingCartItemVO> myShoppingCartItems = MallShoppingCartService.getMyShoppingCartItems(userId);
-        UserModel user = userService.getUserById(userId);
-
+    public String saveOrder() throws BusinessException {
+        UserModel user = userService.getUserByToken();
+        List<MallShoppingCartItemVO> myShoppingCartItems = MallShoppingCartService.getMyShoppingCartItems(user.getUserId());
         if (CollectionUtils.isEmpty(myShoppingCartItems)) {
             //购物车中无数据
             throw new BusinessException(EmBusinessError.SHOPPING_ITEM_ERROR);

@@ -29,9 +29,11 @@ public enum EmBusinessError implements CommonError {
     MYORDER_NOT_EXIST(309,"there is no order in history"),
     NULL_ADDRESS_ERROR(310,"address is not exist"),
     SHOPPING_ITEM_ERROR(311,"shopping item is empty"),
+    DB_ERROR(312,"database has error"),
 
     // 40 start with, about reviews and ratings
     REVIEW_NOT_EXIST(401,"review not exist or you are not author");
+
 
 
 
