@@ -38,6 +38,7 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     @Autowired
     private BookDOMapper bookDOMapper;
 
+
     @Override
     public MallShoppingCartItemVO saveMallCartItem(MallShoppingCartItemDO mallShoppingCartItem)  {
         MallShoppingCartItemVO mallShoppingCartItemVO = new MallShoppingCartItemVO();
@@ -61,8 +62,14 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public String updateMallCartItem(MallShoppingCartItemDO MallShoppingCartItem) {
-        return null;
+    public MallShoppingCartItemDO updateMallCartItem(MallShoppingCartItemDO mallShoppingCartItem) throws BusinessException {
+        MallShoppingCartItemDO mallShoppingCartItemDOUpdate = mallShoppingCartItemMapper.selectByPrimaryKey(mallShoppingCartItem.getCartItemId());
+        mallShoppingCartItemDOUpdate.setGoodsCount(mallShoppingCartItem.getGoodsCount());
+        if(mallShoppingCartItemMapper.updateByPrimaryKeySelective(mallShoppingCartItemDOUpdate)>0){
+            return mallShoppingCartItemDOUpdate;
+        }
+        else
+            throw new BusinessException(EmBusinessError.DB_ERROR);
     }
 
     @Override
@@ -71,8 +78,9 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public Boolean deleteById(Long MallShoppingCartItemId) {
-        return null;
+    public Boolean deleteById(Long mallShoppingCartItemId) {
+
+        return mallShoppingCartItemMapper.deleteByPrimaryKey(mallShoppingCartItemId)>0;
     }
 
     @Override

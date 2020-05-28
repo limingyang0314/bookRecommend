@@ -28,7 +28,8 @@ public enum EmBusinessError implements CommonError {
     ORDER_NOT_EXIST(308,"order not exist"),
     MYORDER_NOT_EXIST(309,"there is no order in history"),
     NULL_ADDRESS_ERROR(310,"address is not exist"),
-    SHOPPING_ITEM_ERROR(311,"shopping item is empty");
+    SHOPPING_ITEM_ERROR(311,"shopping item is empty"),
+    DB_ERROR(312,"database has error");
 
 
 

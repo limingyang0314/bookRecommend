@@ -22,23 +22,23 @@ public interface MallShoppingCartService {
      * @param MallShoppingCartItem
      * @return
      */
-    String updateMallCartItem(MallShoppingCartItemDO MallShoppingCartItem);
+    MallShoppingCartItemDO updateMallCartItem(MallShoppingCartItemDO MallShoppingCartItem) throws BusinessException;
 
     /**
      * 获取购物项详情
      *
-     * @param MallShoppingCartItemId
+     * @param mallShoppingCartItemId
      * @return
      */
-    MallShoppingCartItemDO getMallCartItemById(Long MallShoppingCartItemId);
+    MallShoppingCartItemDO getMallCartItemById(Long mallShoppingCartItemId);
 
     /**
      * 删除购物车中的商品
      *
-     * @param MallShoppingCartItemId
+     * @param mallShoppingCartItemId
      * @return
      */
-    Boolean deleteById(Long MallShoppingCartItemId);
+    Boolean deleteById(Long mallShoppingCartItemId);
 
     /**
      * 获取我的购物车中的列表数据

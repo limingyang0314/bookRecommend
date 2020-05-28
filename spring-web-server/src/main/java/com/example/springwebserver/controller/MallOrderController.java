@@ -112,7 +112,6 @@ public class MallOrderController {
     @GetMapping("/create")
     @ResponseBody
     public String saveOrder() throws BusinessException {
-
         UserModel user = userService.getUserByToken();
         List<MallShoppingCartItemVO> myShoppingCartItems = MallShoppingCartService.getMyShoppingCartItems(user.getUserId());
         if (CollectionUtils.isEmpty(myShoppingCartItems)) {
