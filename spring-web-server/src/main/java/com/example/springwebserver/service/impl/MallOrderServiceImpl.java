@@ -2,10 +2,14 @@ package com.example.springwebserver.service.impl;
 
 import com.example.springwebserver.controller.viewObject.*;
 import com.example.springwebserver.dao.*;
+import com.example.springwebserver.dataObject.BookDO;
 import com.example.springwebserver.dataObject.MallOrderDO;
 import com.example.springwebserver.dataObject.MallOrderItemDO;
+import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.MallOrderService;
+import com.example.springwebserver.service.model.UserModel;
 import com.example.springwebserver.util.BeanUtil;
+import com.example.springwebserver.util.NumberUtil;
 import com.example.springwebserver.util.PageQueryUtil;
 import com.example.springwebserver.util.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.util.CollectionUtils;
 import com.example.springwebserver.enums.*;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -29,7 +34,7 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Autowired
     private MallShoppingCartItemMapper MallShoppingCartItemMapper;
     @Autowired
-    private MallGoodsMapper MallGoodsMapper;
+    private BookDOMapper bookDOMapper;
 
     @Override
     public String updateOrderInfo(MallOrderDO MallOrderDO) {
@@ -51,11 +56,54 @@ public class MallOrderServiceImpl implements MallOrderService {
         return null;
     }
 
-//    @Override
-//    public String saveOrder(UserVO user, List<MallShoppingCartItemVO> myShoppingCartItems) {
-//
-//        return null;
-//    }
+    @Override
+    public String saveOrder(UserModel user, List<MallShoppingCartItemVO> myShoppingCartItems) throws BusinessException {
+        List<Long> itemIdList = myShoppingCartItems.stream().map(MallShoppingCartItemVO::getCartItemId).collect(Collectors.toList());
+        List<Long> goodsIds = myShoppingCartItems.stream().map(MallShoppingCartItemVO::getGoodsId).collect(Collectors.toList());
+        List<BookDO> bookDOS = bookDOMapper.selectByPrimaryKeys(goodsIds);
+        Map<Long, BookDO> BooksMap = bookDOS.stream().collect(Collectors.toMap(BookDO::getBookId, Function.identity(), (entity1, entity2) -> entity1));
+        //删除购物项
+        if (!CollectionUtils.isEmpty(itemIdList) && !CollectionUtils.isEmpty(goodsIds)) {
+            if (MallShoppingCartItemMapper.deleteBatch(itemIdList) > 0) {
+                //生成订单号
+                String orderNo = NumberUtil.getOrderNo();
+                int priceTotal = 0;
+                //保存订单
+                MallOrderDO mallOrder = new MallOrderDO();
+                mallOrder.setOrderNo(orderNo);
+                mallOrder.setUserId(user.getUserId());
+                mallOrder.setUserAddress(user.getAddress());
+                //总价
+                for (MallShoppingCartItemVO MallShoppingCartItemVO : myShoppingCartItems) {
+                    priceTotal += MallShoppingCartItemVO.getGoodsCount() * MallShoppingCartItemVO.getSellingPrice();
+                }
+                mallOrder.setTotalPrice(priceTotal);
+                //todo 订单body字段，用来作为生成支付单描述信息，暂时未接入第三方支付接口，故该字段暂时设为空字符串
+
+                //生成订单项并保存订单项纪录
+                if (MallOrderMapper.insertSelective(mallOrder) > 0) {
+                    //生成所有的订单项快照，并保存至数据库
+                    List<MallOrderItemDO> MallOrderItems = new ArrayList<>();
+                    for (MallShoppingCartItemVO MallShoppingCartItemVO : myShoppingCartItems) {
+                        MallOrderItemDO mallOrderItem = new MallOrderItemDO();
+                        //使用BeanUtil工具类将MallShoppingCartItemVO中的属性复制到MallOrderItem对象中
+                        BeanUtil.copyProperties(MallShoppingCartItemVO, mallOrderItem);
+                        //MallOrderMapper文件insert()方法中使用了useGeneratedKeys因此orderId可以获取到
+                        mallOrderItem.setOrderId(mallOrder.getOrderId());
+                        MallOrderItems.add(mallOrderItem);
+                    }
+                    //保存至数据库
+                    if (MallOrderItemMapper.insertBatch(MallOrderItems) > 0) {
+                        //所有操作成功后，将订单号返回，以供Controller方法跳转到订单详情
+                        return orderNo;
+                    }
+
+                }
+            }
+        }else
+            throw new BusinessException(EmBusinessError.SHOPPING_ITEM_ERROR);
+        return "create order successfully!";
+    }
 
     @Override
     public MallOrderDetailVO getOrderDetailByOrderNo(String orderNo) {

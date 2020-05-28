@@ -15,11 +15,11 @@ public interface MallShoppingCartItemMapper {
 
     MallShoppingCartItemDO selectByPrimaryKey(Long cartItemId);
 
-    MallShoppingCartItemDO selectByUserIdAndGoodsId(@Param("newBeeMallUserId") Long newBeeMallUserId, @Param("goodsId") Long goodsId);
+    MallShoppingCartItemDO selectByUserIdAndGoodsId(@Param("MallUserId") Long UserId, @Param("goodsId") Long goodsId);
 
-    List<MallShoppingCartItemDO> selectByUserId(@Param("newBeeMallUserId") Long newBeeMallUserId, @Param("number") int number);
+    List<MallShoppingCartItemDO> selectByUserId(@Param("UserId") Long UserId);
 
-    int selectCountByUserId(Long newBeeMallUserId);
+    int selectCountByUserId(Long UserId);
 
     int updateByPrimaryKeySelective(MallShoppingCartItemDO record);
 

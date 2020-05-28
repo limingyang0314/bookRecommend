@@ -16,6 +16,7 @@ public class UserVO {
 
     private Integer age;
 
+    private String address;
     @ApiModelProperty("false 为 男， true 为 女")
     private Boolean gender;
 

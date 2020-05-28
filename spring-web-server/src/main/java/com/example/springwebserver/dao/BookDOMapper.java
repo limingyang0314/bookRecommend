@@ -73,4 +73,5 @@ public interface BookDOMapper {
     Page<BookDO> listBookByHotRank();
 
     Page<BookDO> listBookByPage();
+    List<BookDO> selectByPrimaryKeys(List<Long> bookIds);
 }

@@ -2,13 +2,18 @@ package com.example.springwebserver.controller;
 
 import com.example.springwebserver.controller.viewObject.MallOrderDetailVO;
 //import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
+import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
 import com.example.springwebserver.controller.viewObject.UserVO;
+import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.enums.EmBusinessError;
 //import com.example.springwebserver.enums.MallException;
 import com.example.springwebserver.enums.ServiceResultEnum;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
 import com.example.springwebserver.service.MallOrderService;
+import com.example.springwebserver.service.MallShoppingCartService;
+import com.example.springwebserver.service.UserService;
+import com.example.springwebserver.service.model.UserModel;
 import com.example.springwebserver.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,15 +33,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Controller("order")
-@RequestMapping("/order")
+@Controller("mall")
+@RequestMapping("/mall")
 @Slf4j
 @Api(tags = "订单相关接口", value = "提供订单相关的 Rest API")
 public class MallOrderController {
-//    @Resource
-//    private MallShoppingCartService MallShoppingCartService;
-    @Resource
+    @Autowired
+    private MallShoppingCartService MallShoppingCartService;
+    @Autowired
     private MallOrderService MallOrderService;
+    @Autowired
+    private UserService userService;
+
 
     @ApiOperation("根据订单编号获取订单详情")
     @GetMapping("/orderdetail")
@@ -76,7 +84,7 @@ public class MallOrderController {
     }
 
     @ApiOperation("取消订单")
-    @GetMapping("/orders/cancel")
+    @GetMapping("/order/cancel")
     @ResponseBody
     public Result cancelOrder(@RequestParam (name = "userId") Long userId,@RequestParam (name = "orderNo") String orderNo) {
 //        MallUserVO user = (MallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
@@ -89,7 +97,7 @@ public class MallOrderController {
     }
 
     @ApiOperation("完成订单")
-    @PutMapping("/orders/{orderNo}/finish")
+    @PutMapping("/order/finish")
     @ResponseBody
     public Result finishOrder(@RequestParam (name = "userId") Long userId,@RequestParam (name = "orderNo") String orderNo) {
 //        MallUserVO user = (MallUserVO) httpSession.getAttribute(Constants.MALL_USER_SESSION_KEY);
@@ -99,6 +107,23 @@ public class MallOrderController {
         } else {
             return ResultGenerator.genFailResult(finishOrderResult);
         }
+    }
+
+    @ApiOperation("下单")
+    @GetMapping("/createOrder")
+    @ResponseBody
+    public String saveOrder(@RequestParam (name = "userId") Long userId) throws BusinessException {
+        List<MallShoppingCartItemVO> myShoppingCartItems = MallShoppingCartService.getMyShoppingCartItems(userId);
+        UserModel user = userService.getUserById(userId);
+
+        if (CollectionUtils.isEmpty(myShoppingCartItems)) {
+            //购物车中无数据
+            throw new BusinessException(EmBusinessError.SHOPPING_ITEM_ERROR);
+        }
+        //保存订单并返回订单号
+        String saveOrderResult = MallOrderService.saveOrder(user, myShoppingCartItems);
+        //跳转到订单详情页
+        return saveOrderResult;
     }
 
 }
