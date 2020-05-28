@@ -56,7 +56,7 @@ public class BookVO implements Serializable {
 
     private String description;
 
-    private Integer rating;
+    private double rating;
 
     private boolean hasRead = false;
 
