@@ -164,6 +164,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean isLoginUser() throws BusinessException{
+        String token = httpServletRequest.getHeader("Authorization");
+        if(token == null){
+            return false;
+        }
+        UserModel user = (UserModel) redisTemplate.opsForValue().get(token);
+        if(user == null){
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public HashMap<String,String> setWantRead(Long bookId) throws BusinessException{
         HashMap<String,String> ret = new HashMap<String,String>();
         UserModel user = getUserByToken();

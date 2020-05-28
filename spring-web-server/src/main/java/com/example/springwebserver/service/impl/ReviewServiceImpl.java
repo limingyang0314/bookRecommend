@@ -34,6 +34,7 @@ public class ReviewServiceImpl implements ReviewService {
         review.setBookId(bookId);
         review.setContent(content);
         review.setStar(star);
+        review.setUserId(user.getUserId());
         reviewDOMapper.insertSelective(review);
         HashMap<String,String> ret = new HashMap<String,String>();
         ret.put("message","Add review success.");

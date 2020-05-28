@@ -21,4 +21,6 @@ public interface UserService {
     HashMap<String,String> setWantRead(Long bookId) throws BusinessException;
 
     HashMap<String,String> setHasRead(Long bookId) throws BusinessException;
+
+    boolean isLoginUser() throws BusinessException;
 }
