@@ -96,7 +96,6 @@ class HBaseUtil(spark: SparkSession) {
     encode.map("%02x".format(_)).mkString
   }
 
-
 }
 
 object HBaseUtil{

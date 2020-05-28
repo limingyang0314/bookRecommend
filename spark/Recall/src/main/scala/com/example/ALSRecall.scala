@@ -73,10 +73,6 @@ class ALSRecall(data: DataFrame) {
 
   }
 
-
-
-
-
   def getALSRecall(model: ALSModel,
                    spark: SparkSession): DataFrame = {
     val list = model.recommendForAllUsers(20)

@@ -11,7 +11,7 @@ class ModelUtil(spark: SparkSession) {
 
   val cf = "recall"
 
-  def getUserItemRating: DataFrame ={
+  def getUserItemRating: DataFrame = {
 
     // val data = spark.sql (
     //   "select * from book_recommend.ratings")
@@ -38,7 +38,10 @@ class ModelUtil(spark: SparkSession) {
 
 
     val arrToString = udf((value: Seq[Int]) => {
-      val set = mutable.Set(value)
+      val set = mutable.Set[Int]()
+      for(i <- value.indices){
+        set.add(value(i))
+      }
       set.mkString(",")
     })
 
@@ -77,10 +80,8 @@ class ModelUtil(spark: SparkSession) {
         prop
       )
 
-
-
      // val HBase = new HBaseUtil(spark)
-     // HBase.putData(rsRecall, recommList, cf, cell)
+     // HBase.putData(rsRecall, recommendList, cf, cell)
 
   }
 
