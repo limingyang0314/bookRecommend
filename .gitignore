@@ -30,5 +30,4 @@ build/
 ### VS Code ###
 .vscode/
 
-spark/ALSRecall/
-spark/Item2ItemRecall/
+model/
