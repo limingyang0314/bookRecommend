@@ -1,13 +1,17 @@
 package com.example.springwebserver.controller;
 
 
+import com.example.springwebserver.dao.TagDOMapper;
 import com.example.springwebserver.dataObject.BookDO;
+import com.example.springwebserver.dataObject.TagDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
 import com.example.springwebserver.service.BookRecommendService;
 import com.example.springwebserver.service.BookService;
 import com.example.springwebserver.service.model.BookModel;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +34,9 @@ public class RecommendController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private TagDOMapper tagDOMapper;
 
     @GetMapping("/testToken")
     @ResponseBody
@@ -89,5 +96,16 @@ public class RecommendController {
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
         }
         return CommonReturnType.create(data);
+    }
+
+    @ApiOperation("获取热门标签")
+    @GetMapping("/hotTag")
+    @ResponseBody
+    public CommonReturnType getHotTag(@RequestParam(name = "page") int page,
+                                       @RequestParam(name = "size") int size) throws BusinessException {
+        PageHelper.startPage(page, size);
+        Page<TagDO> data = tagDOMapper.listTagByHotVal();
+        List<TagDO> ret = data.getResult();
+        return CommonReturnType.create(ret);
     }
 }

@@ -26,7 +26,7 @@ public class AuthorizeCheckAspect {
     @Autowired
     private HttpServletRequest httpServletRequest;
 
-    @Pointcut("execution(public * com.example.springwebserver.controller.RecommendController.*(..))")
+    @Pointcut("execution(public * com.example.springwebserver.controller.RecommendController.getRecommendByUserID())")
     public void controllerAspect() {
 
     }

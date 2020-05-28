@@ -2,6 +2,7 @@ package com.example.springwebserver.controller;
 
 import com.example.springwebserver.controller.viewObject.BookVO;
 import com.example.springwebserver.dao.RatingDOMapper;
+import com.example.springwebserver.dao.TagDOMapper;
 import com.example.springwebserver.dataObject.RatingDO;
 import com.example.springwebserver.dataObject.RatingDOKey;
 import com.example.springwebserver.dataObject.ReviewAgreeLogDOKey;
@@ -39,6 +40,9 @@ public class BookController extends GlobalExceptionHandler {
 
     @Autowired
     private RatingDOMapper ratingDOMapper;
+
+    @Autowired
+    private TagDOMapper tagDOMapper;
 
     /**
      * 分页获取书籍
@@ -118,6 +122,11 @@ public class BookController extends GlobalExceptionHandler {
         RatingDO temp = ratingDOMapper.selectByPrimaryKey(key);
         double myStar = temp == null ? 0 : temp.getRating();
         vo.setMyRating(myStar);
+
+        //标签热度自增
+        List<String> tagIds = data.getTagIds();
+        tagDOMapper.tagHotValInc(tagIds);
+
         return CommonReturnType.create(vo);
     }
 
