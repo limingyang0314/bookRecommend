@@ -65,7 +65,7 @@
 <!--               enableUpdateByExample="false" enableDeleteByExample="false"-->
 <!--               enableSelectByExample="false" selectByExampleQueryId="false"></table>-->
 
-        <table tableName="ratings"  domainObjectName="RatingDO" enableCountByExample="false"
+        <table tableName="reviews_agree_log"  domainObjectName="ReviewAgreeLogDO" enableCountByExample="false"
                enableUpdateByExample="false" enableDeleteByExample="false"
                enableSelectByExample="false" selectByExampleQueryId="false"></table>
 

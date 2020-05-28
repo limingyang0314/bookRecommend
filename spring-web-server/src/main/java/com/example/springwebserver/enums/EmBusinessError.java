@@ -24,7 +24,10 @@ public enum EmBusinessError implements CommonError {
     BOOK_NOT_EXIST(306, "book not exist"),
     ORDER_CLOSED_BY_MALLUSER(307,"order is closed by user"),
     ORDER_NOT_EXIST(308,"order not exist"),
-    MYORDER_NOT_EXIST(309,"there is no order in history");
+    MYORDER_NOT_EXIST(309,"there is no order in history"),
+
+    // 40 start with, about reviews and ratings
+    REVIEW_NOT_EXIST(401,"review not exist or you are not author");
 
 
     EmBusinessError(int errCode, String errMsg){
