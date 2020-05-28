@@ -27,7 +27,7 @@ object FPGrowth {
     // books.show()
 
     val fpGrowth = new FPGrowth().setItemsCol("books")
-      .setMinSupport(0.0001) // 0.5
+      .setMinSupport(0.5) // 0.5
       .setMinConfidence(0.2) // 0.6
 
     val model = fpGrowth.fit(books)

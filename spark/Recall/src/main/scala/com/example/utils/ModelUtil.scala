@@ -37,10 +37,13 @@ class ModelUtil(spark: SparkSession) {
      */
 
 
-    val arrToString = udf((value: Seq[Int]) => {
+    val arrToString = udf((value: Seq[Int], value2: Seq[Int]) => {
       val set = mutable.Set[Int]()
-      for(i <- value.indices){
+      for (i <- value.indices) {
         set.add(value(i))
+      }
+      for (i <- value2.indices) {
+        set.add(value2(i))
       }
       set.mkString(",")
     })
@@ -61,7 +64,7 @@ class ModelUtil(spark: SparkSession) {
       .select(col(idName),
         col("books1"))
       .join(recommendList2, "user_id")
-      .withColumn("books", arrToString(col("books1") + col("books2")))
+      .withColumn("books", arrToString(col("books1"), col("books2")))
       .select(col(idName),
         col("books"))
 
@@ -84,7 +87,6 @@ class ModelUtil(spark: SparkSession) {
      // HBase.putData(rsRecall, recommendList, cf, cell)
 
   }
-
 
 }
 

@@ -1,12 +1,13 @@
 package com.example
 
 import java.text.SimpleDateFormat
-import java.util.Date
 
 import com.example.utils.ModelUtil
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.ml.recommendation.ALSModel
+
 import org.apache.spark.sql.{DataFrame, SparkSession}
+
 
 object Recall {
 

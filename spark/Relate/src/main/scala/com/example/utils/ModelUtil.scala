@@ -57,7 +57,7 @@ class ModelUtil(spark: SparkSession) {
 
     val arrToString = udf((value: Seq[Long]) => {
       val set = mutable.Set[Long]()
-      for(i <- value.indices){
+      for (i <- value.indices) {
         set.add(value(i))
       }
       set.mkString(",")
