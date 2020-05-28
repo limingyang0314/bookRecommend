@@ -6,10 +6,8 @@
         <result column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="goods_id" jdbcType="BIGINT" property="goodsId"/>
         <result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
-<!--        <result column="goods_cover_img" jdbcType="VARCHAR" property="goodsCoverImg"/>-->
         <result column="selling_price" jdbcType="INTEGER" property="sellingPrice"/>
         <result column="goods_count" jdbcType="INTEGER" property="goodsCount"/>
-<!--        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>-->
     </resultMap>
     <sql id="Base_Column_List">
     order_item_id, order_id, goods_id, goods_name,  selling_price, goods_count
@@ -41,24 +39,21 @@
     where order_item_id = #{orderItemId,jdbcType=BIGINT}
   </delete>
     <insert id="insertBatch" parameterType="com.example.springwebserver.dataObject.MallOrderItemDO">
-        insert into order_item (order_id, goods_id,
-        goods_name, goods_cover_img, selling_price,
-        goods_count)
+        insert into mall_order_item (order_item_id, order_id, goods_id, goods_name, selling_price, goods_count)
         values
         <foreach collection="orderItems" item="orderItem" separator=",">
-            (#{orderItem.orderId,jdbcType=BIGINT}, #{orderItem.goodsId,jdbcType=BIGINT},
-            #{orderItem.goodsName,jdbcType=VARCHAR}, #{orderItem.goodsCoverImg,jdbcType=VARCHAR},
+            (#{orderItem.orderItemId,jdbcType=BIGINT}, #{orderItem.orderId,jdbcType=BIGINT},
+            #{orderItem.goodsId,jdbcType=VARCHAR}, #{orderItem.goodsName,jdbcType=VARCHAR},
             #{orderItem.sellingPrice,jdbcType=INTEGER},
             #{orderItem.goodsCount,jdbcType=INTEGER})
         </foreach>
     </insert>
     <insert id="insert" parameterType="com.example.springwebserver.dataObject.MallOrderItemDO">
-    insert into order_item (order_item_id, order_id, goods_id,
-      goods_name, goods_cover_img, selling_price,
-      goods_count, create_time)
-    values (#{orderItemId,jdbcType=BIGINT}, #{orderId,jdbcType=BIGINT}, #{goodsId,jdbcType=BIGINT},
-      #{goodsName,jdbcType=VARCHAR}, #{goodsCoverImg,jdbcType=VARCHAR}, #{sellingPrice,jdbcType=INTEGER},
-      #{goodsCount,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR})
+        insert into mall_order_item (order_item_id, order_id, goods_id, goods_name, selling_price, goods_count)
+    values (#{orderItem.orderItemId,jdbcType=BIGINT}, #{orderItem.orderId,jdbcType=BIGINT},
+        #{orderItem.goodsId,jdbcType=VARCHAR}, #{orderItem.goodsName,jdbcType=VARCHAR},
+        #{orderItem.sellingPrice,jdbcType=INTEGER},
+        #{orderItem.goodsCount,jdbcType=INTEGER})
   </insert>
     <insert id="insertSelective" parameterType="com.example.springwebserver.dataObject.MallOrderItemDO">
         insert into order_item
@@ -75,20 +70,15 @@
             <if test="goodsName != null">
                 goods_name,
             </if>
-            <if test="goodsCoverImg != null">
-                goods_cover_img,
-            </if>
             <if test="sellingPrice != null">
                 selling_price,
             </if>
             <if test="goodsCount != null">
                 goods_count,
             </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+<!--            order_item_id, order_id, goods_id, goods_name, selling_price, goods_count-->
             <if test="orderItemId != null">
                 #{orderItemId,jdbcType=BIGINT},
             </if>
@@ -101,23 +91,18 @@
             <if test="goodsName != null">
                 #{goodsName,jdbcType=VARCHAR},
             </if>
-            <if test="goodsCoverImg != null">
-                #{goodsCoverImg,jdbcType=VARCHAR},
-            </if>
             <if test="sellingPrice != null">
                 #{sellingPrice,jdbcType=INTEGER},
             </if>
             <if test="goodsCount != null">
                 #{goodsCount,jdbcType=INTEGER},
             </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=VARCHAR},
-            </if>
         </trim>
     </insert>
     <update id="updateByPrimaryKeySelective" parameterType="com.example.springwebserver.dataObject.MallOrderItemDO">
         update order_item
         <set>
+<!--            order_item_id, order_id, goods_id, goods_name, selling_price, goods_count-->
             <if test="orderId != null">
                 order_id = #{orderId,jdbcType=BIGINT},
             </if>
@@ -127,17 +112,11 @@
             <if test="goodsName != null">
                 goods_name = #{goodsName,jdbcType=VARCHAR},
             </if>
-            <if test="goodsCoverImg != null">
-                goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
-            </if>
             <if test="sellingPrice != null">
                 selling_price = #{sellingPrice,jdbcType=INTEGER},
             </if>
             <if test="goodsCount != null">
                 goods_count = #{goodsCount,jdbcType=INTEGER},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=VARCHAR},
             </if>
         </set>
         where order_item_id = #{orderItemId,jdbcType=BIGINT}
@@ -147,10 +126,8 @@
     set order_id = #{orderId,jdbcType=BIGINT},
       goods_id = #{goodsId,jdbcType=BIGINT},
       goods_name = #{goodsName,jdbcType=VARCHAR},
-      goods_cover_img = #{goodsCoverImg,jdbcType=VARCHAR},
       selling_price = #{sellingPrice,jdbcType=INTEGER},
-      goods_count = #{goodsCount,jdbcType=INTEGER},
-      create_time = #{createTime,jdbcType=VARCHAR}
+      goods_count = #{goodsCount,jdbcType=INTEGER}
     where order_item_id = #{orderItemId,jdbcType=BIGINT}
   </update>
 </mapper>

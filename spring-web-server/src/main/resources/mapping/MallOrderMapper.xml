@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.springwebserver.dao.MallOrderMapper">
+<!--    order_id, user_id, total_price, order_status, user_address, order_no-->
     <resultMap id="BaseResultMap" type="com.example.springwebserver.dataObject.MallOrderDO">
         <id column="order_id" jdbcType="BIGINT" property="orderId"/>
         <result column="user_id" jdbcType="BIGINT" property="userId"/>
         <result column="total_price" jdbcType="INTEGER" property="totalPrice"/>
-<!--        <result column="pay_time" jdbcType="VARCHAR" property="payTime"/>-->
         <result column="order_status" jdbcType="VARCHAR" property="orderStatus"/>
-<!--        <result column="extra_info" jdbcType="VARCHAR" property="extraInfo"/>-->
         <result column="user_address" jdbcType="VARCHAR" property="userAddress"/>
-<!--        <result column="is_deleted" jdbcType="TINYINT" property="isDeleted"/>-->
-<!--        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>-->
         <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
     </resultMap>
     <sql id="Base_Column_List">
@@ -95,26 +92,22 @@
     where order_id = #{orderId,jdbcType=BIGINT} and is_deleted=0
   </update>
     <insert id="insert" parameterType="com.example.springwebserver.dataObject.MallOrderDO">
-    insert into mall_order (order_id, order_no, user_id, 
-      total_price, pay_status, pay_type, 
-      pay_time, order_status, extra_info, 
-      user_address,is_deleted, create_time, update_time
-      )
-    values (#{orderId,jdbcType=BIGINT}, #{orderNo,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, 
-      #{totalPrice,jdbcType=INTEGER}, #{payStatus,jdbcType=TINYINT}, #{payType,jdbcType=TINYINT}, 
-      #{payTime,jdbcType=VARCHAR}, #{orderStatus,jdbcType=TINYINT}, #{extraInfo,jdbcType=VARCHAR}, 
-       #{userAddress,jdbcType=VARCHAR},#{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR}
+    insert into mall_order (order_id, user_id,
+      total_price, order_status
+      user_address,order_no
+        )
+    values (#{orderId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},
+      #{totalPrice,jdbcType=INTEGER}, #{orderStatus,jdbcType=TINYINT},
+       #{userAddress,jdbcType=VARCHAR}, #{orderNo,jdbcType=VARCHAR}
       )
   </insert>
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="orderId"
             parameterType="com.example.springwebserver.dataObject.MallOrderDO">
         insert into mall_order
+<!--        order_id, user_id, total_price, order_status, user_address, order_no-->
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="orderId != null">
                 order_id,
-            </if>
-            <if test="orderNo != null">
-                order_no,
             </if>
             <if test="userId != null">
                 user_id,
@@ -122,20 +115,8 @@
             <if test="totalPrice != null">
                 total_price,
             </if>
-            <if test="payStatus != null">
-                pay_status,
-            </if>
-            <if test="payType != null">
-                pay_type,
-            </if>
-            <if test="payTime != null">
-                pay_time,
-            </if>
             <if test="orderStatus != null">
                 order_status,
-            </if>
-            <if test="extraInfo != null">
-                extra_info,
             </if>
             <if test="userAddress != null">
                 user_address,
@@ -143,40 +124,23 @@
             <if test="isDeleted != null">
                 is_deleted,
             </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateTime != null">
-                update_time,
+            <if test="orderNo != null">
+                order_no,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderId != null">
                 #{orderId,jdbcType=BIGINT},
             </if>
-            <if test="orderNo != null">
-                #{orderNo,jdbcType=VARCHAR},
-            </if>
+
             <if test="userId != null">
                 #{userId,jdbcType=BIGINT},
             </if>
             <if test="totalPrice != null">
                 #{totalPrice,jdbcType=INTEGER},
             </if>
-            <if test="payStatus != null">
-                #{payStatus,jdbcType=TINYINT},
-            </if>
-            <if test="payType != null">
-                #{payType,jdbcType=TINYINT},
-            </if>
-            <if test="payTime != null">
-                #{payTime,jdbcType=VARCHAR},
-            </if>
             <if test="orderStatus != null">
                 #{orderStatus,jdbcType=TINYINT},
-            </if>
-            <if test="extraInfo != null">
-                #{extraInfo,jdbcType=VARCHAR},
             </if>
             <if test="userAddress != null">
                 #{userAddress,jdbcType=VARCHAR},
@@ -184,30 +148,11 @@
             <if test="isDeleted != null">
                 #{isDeleted,jdbcType=TINYINT},
             </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=VARCHAR},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=VARCHAR},
+            <if test="orderNo != null">
+                #{orderNo,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
-    <update id="checkDone">
-        update mall_order
-        set order_status = 2,update_time = now()
-        where order_id in
-        <foreach collection="orderIds" item="item" index="index"
-                 open="(" separator="," close=")">#{item}
-        </foreach>
-    </update>
-    <update id="checkOut">
-        update mall_order
-        set order_status = 3,update_time = now()
-        where order_id in
-        <foreach collection="orderIds" item="item" index="index"
-                 open="(" separator="," close=")">#{item}
-        </foreach>
-    </update>
     <update id="closeOrder">
         update mall_order
         set order_status = #{orderStatus}
@@ -242,18 +187,13 @@
     </update>
     <update id="updateByPrimaryKey" parameterType="com.example.springwebserver.dataObject.MallOrderDO">
     update mall_order
-    set order_no = #{orderNo,jdbcType=VARCHAR},
-      user_id = #{userId,jdbcType=BIGINT},
+<!--        order_id, user_id, total_price, order_status, user_address, order_no-->
+    set user_id = #{userId,jdbcType=BIGINT},
       total_price = #{totalPrice,jdbcType=INTEGER},
-      pay_status = #{payStatus,jdbcType=TINYINT},
-      pay_type = #{payType,jdbcType=TINYINT},
-      pay_time = #{payTime,jdbcType=VARCHAR},
       order_status = #{orderStatus,jdbcType=TINYINT},
       extra_info = #{extraInfo,jdbcType=VARCHAR},
       user_address = #{userAddress,jdbcType=VARCHAR},
-      is_deleted = #{isDeleted,jdbcType=TINYINT},
-      create_time = #{createTime,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=VARCHAR}
+        order_no = #{orderNo,jdbcType=VARCHAR},
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>

@@ -16,18 +16,23 @@ public enum EmBusinessError implements CommonError {
     USER_LOGIN_FORM_CONTENT_BLACK(205, "user name or password can't be blank"),
 
 
-    // 30 start with, about book and deal
+    // 301 start with, about book
     STOCK_NOT_ENOUGH(301, "stock not enough"),
     RATELIMIT(303, "the requests are too much, please try it latter"),
     ITEM_NOT_EXIT(304, "book not exit"),
     BOOK_DATA_FORMAT_ERROR(305, "transform error occur, when transform DO to model"),
     BOOK_NOT_EXIST(306, "book not exist"),
+
+    //307 start with, about deal
     ORDER_CLOSED_BY_MALLUSER(307,"order is closed by user"),
     ORDER_NOT_EXIST(308,"order not exist"),
     MYORDER_NOT_EXIST(309,"there is no order in history"),
+    NULL_ADDRESS_ERROR(310,"address is not exist"),
+    SHOPPING_ITEM_ERROR(311,"shopping item is empty"),
 
     // 40 start with, about reviews and ratings
     REVIEW_NOT_EXIST(401,"review not exist or you are not author");
+
 
 
     EmBusinessError(int errCode, String errMsg){

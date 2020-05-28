@@ -4,8 +4,11 @@ package com.example.springwebserver.service;
 import com.example.springwebserver.controller.viewObject.MallOrderDetailVO;
 import com.example.springwebserver.controller.viewObject.MallOrderItemVO;
 //import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
+import com.example.springwebserver.controller.viewObject.MallShoppingCartItemVO;
 import com.example.springwebserver.controller.viewObject.UserVO;
 import com.example.springwebserver.dataObject.MallOrderDO;
+import com.example.springwebserver.exception.BusinessException;
+import com.example.springwebserver.service.model.UserModel;
 import com.example.springwebserver.util.PageQueryUtil;
 import com.example.springwebserver.util.PageResult;
 import lombok.Data;
@@ -63,7 +66,7 @@ public interface MallOrderService {
      * @param myShoppingCartItems
      * @return
      */
-//    String saveOrder(UserVO user, List<MallShoppingCartItemVO> myShoppingCartItems);
+    String saveOrder(UserModel user, List<MallShoppingCartItemVO> myShoppingCartItems) throws BusinessException;
 
     /**
      * 获取订单详情

@@ -29,4 +29,6 @@ public class UserModel implements Serializable {
     @NotBlank(message = "password can't be null")
     private String encryptPassword;
 
+    private String address = "";
+
 }

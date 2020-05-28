@@ -6,9 +6,12 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+
 @Data
-@ApiModel("订单详情页面订单实体")
-public class MallOrderItemVO implements Serializable {
+@ApiModel("购物车页面购物项实体")
+public class MallShoppingCartItemVO implements Serializable {
+
+    private Long cartItemId;
 
     private Long goodsId;
 
