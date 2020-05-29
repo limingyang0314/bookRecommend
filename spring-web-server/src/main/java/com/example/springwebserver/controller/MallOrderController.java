@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +40,9 @@ import java.util.Map;
 @Api(tags = "订单相关接口", value = "提供订单相关的 Rest API")
 public class MallOrderController {
     @Autowired
-    private MallShoppingCartService MallShoppingCartService;
+    private MallShoppingCartService mallShoppingCartService;
     @Autowired
-    private MallOrderService MallOrderService;
+    private MallOrderService mallOrderService;
     @Autowired
     private UserService userService;
 
@@ -52,7 +53,7 @@ public class MallOrderController {
     //HttpServletRequest request,
     public CommonReturnType orderDetailPage( @RequestParam(name = "orderNo") String orderNo) throws BusinessException {
         UserModel user = userService.getUserByToken();
-        MallOrderDetailVO orderDetailVO = MallOrderService.getOrderDetailByOrderNo(orderNo);
+        MallOrderDetailVO orderDetailVO = mallOrderService.getOrderDetailByOrderNo(orderNo);
         if (orderDetailVO == null) {
             log.warn("==== [get order] ==== order not exit");
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
@@ -71,10 +72,10 @@ public class MallOrderController {
         if (StringUtils.isEmpty(params.get("page"))) {
             params.put("page", 1);
         }
-        params.put("limit", Constants.ORDER_SEARCH_PAGE_LIMIT);
+        params.put("limit", 20);
         //封装我的订单数据
         PageQueryUtil pageUtil = new PageQueryUtil(params);
-        PageResult pageResult = MallOrderService.getMyOrders(pageUtil);
+        PageResult pageResult = mallOrderService.getMyOrders(pageUtil);
         if(pageResult==null){
             log.warn("==== [get myorder] ==== myorder not exit");
             throw new BusinessException(EmBusinessError.MYORDER_NOT_EXIST);
@@ -87,7 +88,7 @@ public class MallOrderController {
     @ResponseBody
     public Result cancelOrder(@RequestParam (name = "orderNo") String orderNo) throws BusinessException {
         UserModel user = userService.getUserByToken();
-        String cancelOrderResult = MallOrderService.cancelOrder(orderNo, user.getUserId());
+        String cancelOrderResult = mallOrderService.cancelOrder(orderNo, user.getUserId());
         if (ServiceResultEnum.SUCCESS.getResult().equals(cancelOrderResult)) {
             return ResultGenerator.genSuccessResult();
         } else {
@@ -96,11 +97,11 @@ public class MallOrderController {
     }
 
     @ApiOperation("完成订单")
-    @PutMapping("/finish")
+    @GetMapping("/finish")
     @ResponseBody
     public Result finishOrder(@RequestParam (name = "orderNo") String orderNo) throws BusinessException {
         UserModel user = userService.getUserByToken();
-        String finishOrderResult = MallOrderService.finishOrder(orderNo, user.getUserId());
+        String finishOrderResult = mallOrderService.finishOrder(orderNo, user.getUserId());
         if (ServiceResultEnum.SUCCESS.getResult().equals(finishOrderResult)) {
             return ResultGenerator.genSuccessResult();
         } else {
@@ -109,17 +110,18 @@ public class MallOrderController {
     }
 
     @ApiOperation("下单")
-    @GetMapping("/create")
+    @PostMapping("/create")
     @ResponseBody
-    public String saveOrder() throws BusinessException {
+    public String saveOrder(@RequestBody Map<String,Long> map) throws BusinessException {
+        List<Long> orderIds = new ArrayList<>(map.values());
         UserModel user = userService.getUserByToken();
-        List<MallShoppingCartItemVO> myShoppingCartItems = MallShoppingCartService.getMyShoppingCartItems(user.getUserId());
+        List<MallShoppingCartItemVO> myShoppingCartItems = mallShoppingCartService.getMallCartItemById(orderIds);
         if (CollectionUtils.isEmpty(myShoppingCartItems)) {
             //购物车中无数据
             throw new BusinessException(EmBusinessError.SHOPPING_ITEM_ERROR);
         }
         //保存订单并返回订单号
-        String saveOrderResult = MallOrderService.saveOrder(user, myShoppingCartItems);
+        String saveOrderResult = mallOrderService.saveOrder(user, myShoppingCartItems);
         //跳转到订单详情页
         return saveOrderResult;
     }

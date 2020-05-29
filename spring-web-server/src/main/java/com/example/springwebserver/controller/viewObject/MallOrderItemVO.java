@@ -7,7 +7,7 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-@ApiModel("订单详情页面订单实体")
+@ApiModel("订单详情-单个订单实体")
 public class MallOrderItemVO implements Serializable {
 
     private Long goodsId;

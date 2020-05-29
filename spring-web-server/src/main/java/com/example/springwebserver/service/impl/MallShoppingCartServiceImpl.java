@@ -52,6 +52,17 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
+    public MallShoppingCartItemDO updateMallCartItem(Long mallShoppingCartItemId, int goodsCount) throws BusinessException {
+        MallShoppingCartItemDO mallShoppingCartItemDOUpdate = mallShoppingCartItemMapper.selectByPrimaryKey(mallShoppingCartItemId);
+        mallShoppingCartItemDOUpdate.setGoodsCount(goodsCount);
+        if(mallShoppingCartItemMapper.updateByPrimaryKeySelective(mallShoppingCartItemDOUpdate)>0){
+            return mallShoppingCartItemDOUpdate;
+        }
+        else
+            throw new BusinessException(EmBusinessError.DB_ERROR);
+    }
+
+    @Override
     public List<MallShoppingCartItemVO> saveMallCartItems(List<MallShoppingCartItemDO> mallShoppingCartItems) {
         List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
         for(MallShoppingCartItemDO mallShoppingCartItem :mallShoppingCartItems){
@@ -61,20 +72,17 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
         return mallShoppingCartItemVOS;
     }
 
-    @Override
-    public MallShoppingCartItemDO updateMallCartItem(MallShoppingCartItemDO mallShoppingCartItem) throws BusinessException {
-        MallShoppingCartItemDO mallShoppingCartItemDOUpdate = mallShoppingCartItemMapper.selectByPrimaryKey(mallShoppingCartItem.getCartItemId());
-        mallShoppingCartItemDOUpdate.setGoodsCount(mallShoppingCartItem.getGoodsCount());
-        if(mallShoppingCartItemMapper.updateByPrimaryKeySelective(mallShoppingCartItemDOUpdate)>0){
-            return mallShoppingCartItemDOUpdate;
-        }
-        else
-            throw new BusinessException(EmBusinessError.DB_ERROR);
-    }
 
     @Override
-    public MallShoppingCartItemDO getMallCartItemById(Long MallShoppingCartItemId) {
-        return null;
+    public MallShoppingCartItemVO getMallCartItemById(Long mallShoppingCartItemId) {
+        MallShoppingCartItemDO mallShoppingCartItemDO = mallShoppingCartItemMapper.selectByPrimaryKey(mallShoppingCartItemId);
+        BookDO bookDO = bookDOMapper.selectByPrimaryKey(mallShoppingCartItemDO.getGoodsId());
+        MallShoppingCartItemVO mallShoppingCartItemVO = new MallShoppingCartItemVO();
+        BeanUtil.copyProperties(mallShoppingCartItemDO,mallShoppingCartItemVO);
+        mallShoppingCartItemVO.setSellingPrice(bookDO.getPrice());
+        mallShoppingCartItemVO.setGoodsCoverImg(bookDO.getCoverUrl());
+        mallShoppingCartItemVO.setGoodsName(bookDO.getBookName());
+        return mallShoppingCartItemVO;
     }
 
     @Override
@@ -116,13 +124,13 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public List<MallShoppingCartItemDO> getMallCartItemById(List<Long> itemIds) {
-        List<MallShoppingCartItemDO> mallShoppingCartItemDOS = new ArrayList<>();
+    public List<MallShoppingCartItemVO> getMallCartItemById(List<Long> itemIds) {
+        List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
         for(Long itemid : itemIds){
-            MallShoppingCartItemDO mallShoppingCartItemDO = getMallCartItemById(itemid);
-            mallShoppingCartItemDOS.add(mallShoppingCartItemDO);
+            MallShoppingCartItemVO mallShoppingCartItemVO = getMallCartItemById(itemid);
+            mallShoppingCartItemVOS.add(mallShoppingCartItemVO);
         }
-        return mallShoppingCartItemDOS;
+        return mallShoppingCartItemVOS;
     }
 
     //todo 修改session中购物项数量

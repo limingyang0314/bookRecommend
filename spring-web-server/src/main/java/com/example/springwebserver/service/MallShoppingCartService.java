@@ -18,11 +18,11 @@ public interface MallShoppingCartService {
 
     /**
      * 修改购物车中的属性
-     *
-     * @param MallShoppingCartItem
+     * @param mallShoppingCartItemId
+     * @param goodsCount
      * @return
      */
-    MallShoppingCartItemDO updateMallCartItem(MallShoppingCartItemDO MallShoppingCartItem) throws BusinessException;
+    MallShoppingCartItemDO updateMallCartItem(Long mallShoppingCartItemId,int goodsCount) throws BusinessException;
 
     /**
      * 获取购物项详情
@@ -30,7 +30,7 @@ public interface MallShoppingCartService {
      * @param mallShoppingCartItemId
      * @return
      */
-    MallShoppingCartItemDO getMallCartItemById(Long mallShoppingCartItemId);
+    MallShoppingCartItemVO getMallCartItemById(Long mallShoppingCartItemId);
 
     /**
      * 删除购物车中的商品
@@ -47,6 +47,6 @@ public interface MallShoppingCartService {
      * @return
      */
     List<MallShoppingCartItemVO> getMyShoppingCartItems( Long MallUserId);
-    List<MallShoppingCartItemDO> getMallCartItemById(List<Long> itemIds);
+    List<MallShoppingCartItemVO> getMallCartItemById(List<Long> itemIds);
     List<MallShoppingCartItemVO> saveMallCartItems(List<MallShoppingCartItemDO> mallShoppingCartItems) ;
 }
