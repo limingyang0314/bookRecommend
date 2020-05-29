@@ -121,9 +121,6 @@
             <if test="userAddress != null">
                 user_address,
             </if>
-            <if test="isDeleted != null">
-                is_deleted,
-            </if>
             <if test="orderNo != null">
                 order_no,
             </if>
@@ -144,9 +141,6 @@
             </if>
             <if test="userAddress != null">
                 #{userAddress,jdbcType=VARCHAR},
-            </if>
-            <if test="isDeleted != null">
-                #{isDeleted,jdbcType=TINYINT},
             </if>
             <if test="orderNo != null">
                 #{orderNo,jdbcType=VARCHAR},

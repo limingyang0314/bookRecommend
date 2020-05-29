@@ -53,6 +53,8 @@ public class MallShoppingCartController {
         return CommonReturnType.create(mallShoppingCartItemVOList);
     }
 
+
+
     @ApiOperation("添加图书到购物车")
     @PostMapping("/add")
     @ResponseBody
@@ -81,10 +83,10 @@ public class MallShoppingCartController {
     @ApiOperation("更新购物车商品信息")
     @PostMapping("/update")
     @ResponseBody
-    public CommonReturnType updateMallShoppingCartItem(@RequestBody MallShoppingCartItemDO mallShoppingCartItemDO) throws BusinessException {
+    public CommonReturnType updateMallShoppingCartItem(@RequestParam(name = "mallShoppingCartItemId") long mallShoppingCartItemId,@RequestParam(name = "goodsCount") int goodsCount) throws BusinessException {
         UserModel user = userService.getUserByToken();
-        MallShoppingCartItemDO mallShoppingCartItemDOUpdate = mallShoppingCartService.updateMallCartItem(mallShoppingCartItemDO);
-        return CommonReturnType.create(mallShoppingCartItemDO);
+        MallShoppingCartItemDO mallShoppingCartItemDOUpdate = mallShoppingCartService.updateMallCartItem(mallShoppingCartItemId,goodsCount);
+        return CommonReturnType.create(mallShoppingCartItemDOUpdate);
     }
 
     @ApiOperation("删除购物车商品")

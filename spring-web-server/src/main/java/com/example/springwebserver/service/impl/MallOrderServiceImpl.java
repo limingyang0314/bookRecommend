@@ -79,6 +79,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                     priceTotal += MallShoppingCartItemVO.getGoodsCount() * MallShoppingCartItemVO.getSellingPrice();
                 }
                 mallOrder.setTotalPrice(priceTotal);
+                mallOrder.setOrderStatus("已下单");
                 //todo 订单body字段，用来作为生成支付单描述信息，暂时未接入第三方支付接口，故该字段暂时设为空字符串
 
                 //生成订单项并保存订单项纪录
@@ -97,7 +98,8 @@ public class MallOrderServiceImpl implements MallOrderService {
                     if (mallOrderItemMapper.insertBatch(MallOrderItems) > 0) {
                         //所有操作成功后，将订单号返回，以供Controller方法跳转到订单详情
                         return orderNo;
-                    }
+                    }else
+                        throw new BusinessException(EmBusinessError.DB_ERROR);
 
                 }
             }
