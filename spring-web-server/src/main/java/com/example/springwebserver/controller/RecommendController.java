@@ -2,12 +2,11 @@ package com.example.springwebserver.controller;
 
 
 import com.example.springwebserver.dao.TagDOMapper;
-import com.example.springwebserver.dataObject.BookDO;
 import com.example.springwebserver.dataObject.TagDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
-import com.example.springwebserver.service.BookRecommendService;
+import com.example.springwebserver.service.RecommendService;
 import com.example.springwebserver.service.BookService;
 import com.example.springwebserver.service.model.BookModel;
 import com.github.pagehelper.Page;
@@ -30,7 +29,7 @@ import java.util.List;
 @Api(tags = "推荐相关接口", value = "提供个性化推荐相关的 Rest API")
 public class RecommendController {
     @Autowired
-    private BookRecommendService bookRecommendService;
+    private RecommendService recommendService;
 
     @Autowired
     private BookService bookService;
@@ -58,7 +57,7 @@ public class RecommendController {
     public CommonReturnType getRecommendByBookID(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "bookID") Long bookID) throws BusinessException {
-        List<BookModel> data = bookRecommendService.listBookRecommendByBookID(bookID,page,size);
+        List<BookModel> data = recommendService.listBookRecommendByBookID(bookID,page,size);
         if(data.size() == 0){
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
         }
@@ -79,7 +78,7 @@ public class RecommendController {
     public CommonReturnType getRecommendByUserID(@RequestParam(name = "page") int page,
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "userID") Long userID) throws BusinessException {
-        List<BookModel> data = bookRecommendService.listBookRecommendByUserID(userID,page,size);
+        List<BookModel> data = recommendService.listBookRecommendByUserID(userID,page,size);
         if(data.size() == 0){
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
         }
@@ -95,6 +94,17 @@ public class RecommendController {
         if(data.size() == 0){
             throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
         }
+        return CommonReturnType.create(data);
+    }
+
+    @ApiOperation("获取某用户的相关标签推荐")
+    @GetMapping("/userTag")
+    @ResponseBody
+    public CommonReturnType getRecommendTagByUserID(@RequestParam(name = "userID") Long userID) throws BusinessException {
+        List<TagDO> data = recommendService.listTagRecommendByUserID(userID);
+//        if(data.size() == 0){
+//            throw new BusinessException(EmBusinessError.TAG_NOT_EXIST);
+//        }
         return CommonReturnType.create(data);
     }
 

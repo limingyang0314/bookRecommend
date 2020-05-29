@@ -16,12 +16,13 @@ public enum EmBusinessError implements CommonError {
     USER_LOGIN_FORM_CONTENT_BLACK(205, "user name or password can't be blank"),
 
 
-    // 301 start with, about book
+    // 301 start with, about book,tag
     STOCK_NOT_ENOUGH(301, "stock not enough"),
     RATELIMIT(303, "the requests are too much, please try it latter"),
     ITEM_NOT_EXIT(304, "book not exit"),
     BOOK_DATA_FORMAT_ERROR(305, "transform error occur, when transform DO to model"),
     BOOK_NOT_EXIST(306, "book not exist"),
+    TAG_NOT_EXIST(307, "tag not exist"),
 
     //307 start with, about deal
     ORDER_CLOSED_BY_MALLUSER(307,"order is closed by user"),
