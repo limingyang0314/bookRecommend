@@ -161,11 +161,12 @@ public class MallOrderServiceImpl implements MallOrderService {
                 if(itemByBookIdMap.containsKey(book_id)){
                     MallOrderItemDO mallOrderItemDO = itemByBookIdMap.get(book_id);
                     BookDO bookDO = bookByBookIdMap.get(book_id);
-                    mallOrderItemDO.setCoverUrl(bookDO.getCoverUrl());
+                    String url = bookDO.getCoverUrl();
+                    mallOrderItemDO.setGoodsCoverImg(url);
                     itemByBookIdMap.put(book_id,mallOrderItemDO);
                 }
             }
-            itemDOS = itemByBookIdMap.values().stream().collect(Collectors.toList());
+            itemDOS = new ArrayList<>(itemByBookIdMap.values());
             Map<Long,List<MallOrderItemDO>> itemByOrderIdMap = itemDOS.stream().collect(groupingBy(MallOrderItemDO::getOrderId));
 
             for(MallOrderDetailVO mallOrderDetailVO:detailVOS){

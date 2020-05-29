@@ -14,7 +14,7 @@ public class MallOrderItemDO {
 
     private String goodsName;
 
-    private String coverUrl;
+    private String goodsCoverImg;
 
     private Integer sellingPrice;
 
@@ -31,7 +31,6 @@ public class MallOrderItemDO {
         sb.append(", orderId=").append(orderId);
         sb.append(", goodsId=").append(goodsId);
         sb.append(", goodsName=").append(goodsName);
-        sb.append(", goodsCoverImg=").append(coverUrl);
         sb.append(", sellingPrice=").append(sellingPrice);
         sb.append(", goodsCount=").append(goodsCount);
         sb.append("]");
