@@ -9,32 +9,19 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-@ApiModel("订单详情页页面实体")
+@ApiModel("订单详情-页面实体")
 public class MallOrderDetailVO implements Serializable {
 
+    private Long orderId;
     private String orderNo;
-
     private Integer totalPrice;
 
-    private Byte payStatus;
-
-    private String payStatusString;
-
-    private Byte payType;
-
-    private String payTypeString;
-
-    private Date payTime;
-
-    private Byte orderStatus;
-
-    private String orderStatusString;
+    private String orderStatus;
 
     private String userAddress;
 
-    private Date createTime;
+    private List<MallOrderItemVO> mallOrderItemVOS;
 
-    private List<MallOrderItemVO> MallOrderItemVOS;
 
 
 }

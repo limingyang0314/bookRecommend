@@ -91,7 +91,7 @@ public interface MallOrderService {
      * @param pageUtil
      * @return
      */
-    PageResult getMyOrders(PageQueryUtil pageUtil);
+    PageResult getMyOrders(PageQueryUtil pageUtil) throws BusinessException;
 
     /**
      * 手动取消订单
