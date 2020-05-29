@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.example.springwebserver.enums.*;
 
+import java.awt.print.Book;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -28,11 +29,11 @@ import static java.util.stream.Collectors.groupingBy;
 public class MallOrderServiceImpl implements MallOrderService {
 
     @Autowired
-    private MallOrderMapper MallOrderMapper;
+    private MallOrderMapper mallOrderMapper;
     @Autowired
-    private MallOrderItemMapper MallOrderItemMapper;
+    private MallOrderItemMapper mallOrderItemMapper;
     @Autowired
-    private MallShoppingCartItemMapper MallShoppingCartItemMapper;
+    private MallShoppingCartItemMapper mallShoppingCartItemMapper;
     @Autowired
     private BookDOMapper bookDOMapper;
 
@@ -64,7 +65,7 @@ public class MallOrderServiceImpl implements MallOrderService {
         Map<Long, BookDO> BooksMap = bookDOS.stream().collect(Collectors.toMap(BookDO::getBookId, Function.identity(), (entity1, entity2) -> entity1));
         //删除购物项
         if (!CollectionUtils.isEmpty(itemIdList) && !CollectionUtils.isEmpty(goodsIds)) {
-            if (MallShoppingCartItemMapper.deleteBatch(itemIdList) > 0) {
+            if (mallShoppingCartItemMapper.deleteBatch(itemIdList) > 0) {
                 //生成订单号
                 String orderNo = NumberUtil.getOrderNo();
                 int priceTotal = 0;
@@ -81,7 +82,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 //todo 订单body字段，用来作为生成支付单描述信息，暂时未接入第三方支付接口，故该字段暂时设为空字符串
 
                 //生成订单项并保存订单项纪录
-                if (MallOrderMapper.insertSelective(mallOrder) > 0) {
+                if (mallOrderMapper.insertSelective(mallOrder) > 0) {
                     //生成所有的订单项快照，并保存至数据库
                     List<MallOrderItemDO> MallOrderItems = new ArrayList<>();
                     for (MallShoppingCartItemVO MallShoppingCartItemVO : myShoppingCartItems) {
@@ -93,7 +94,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                         MallOrderItems.add(mallOrderItem);
                     }
                     //保存至数据库
-                    if (MallOrderItemMapper.insertBatch(MallOrderItems) > 0) {
+                    if (mallOrderItemMapper.insertBatch(MallOrderItems) > 0) {
                         //所有操作成功后，将订单号返回，以供Controller方法跳转到订单详情
                         return orderNo;
                     }
@@ -108,11 +109,11 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public MallOrderDetailVO getOrderDetailByOrderNo(String orderNo) {
         //通过订单编号返回订单实体
-        MallOrderDO MallOrder = MallOrderMapper.selectByOrderNo(orderNo);
+        MallOrderDO MallOrder = mallOrderMapper.selectByOrderNo(orderNo);
         if (MallOrder != null) {
             //todo 验证是否是当前userId下的订单，否则报错
             //通过订单编号，查询该订单编号下所有的商品实体
-            List<MallOrderItemDO> orderItems = MallOrderItemMapper.selectByOrderId(MallOrder.getOrderId());
+            List<MallOrderItemDO> orderItems = mallOrderItemMapper.selectByOrderId(MallOrder.getOrderId());
             //获取订单项数据
             if (!CollectionUtils.isEmpty(orderItems)) {
                 //把商品实体copy到vo类
@@ -121,7 +122,7 @@ public class MallOrderServiceImpl implements MallOrderService {
                 MallOrderDetailVO MallOrderDetailVO = new MallOrderDetailVO();
                 //把order实体中的属性copy给订单详情vo实体
                 BeanUtil.copyProperties(MallOrder, MallOrderDetailVO);
-                MallOrderDetailVO.setOrderStatusString(MallOrderStatusEnum.getMallOrderStatusEnumByStatus(MallOrderDetailVO.getOrderStatus()).getName());
+                MallOrderDetailVO.setOrderStatus(MallOrderDetailVO.getOrderStatus()+"");
 //                MallOrderDetailVO.setPayTypeString(PayTypeEnum.getPayTypeEnumByType(MallOrderDetailVO.getPayType()).getName());
                 MallOrderDetailVO.setMallOrderItemVOS(MallOrderItemVOS);
                 return MallOrderDetailVO;
@@ -136,53 +137,58 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
-    public PageResult getMyOrders(PageQueryUtil pageUtil) {
-        //pageUtil是一个hashmap
-        //得到所有订单数
-        int total = MallOrderMapper.getTotalMallOrders(pageUtil);
-        //得到所有订单
-        List<MallOrderDO> MallOrders = MallOrderMapper.findMallOrderList(pageUtil);
-        //创建返还给前端的VO类
-        List<MallOrderListVO> orderListVOS = new ArrayList<>();
-        if (total > 0) {
-            //数据转换 将实体类转成vo
-            orderListVOS = BeanUtil.copyList(MallOrders, MallOrderListVO.class);
-            //设置订单状态
-            for (MallOrderListVO MallOrderListVO : orderListVOS) {
-                MallOrderListVO.setOrderStatusString(MallOrderStatusEnum.getMallOrderStatusEnumByStatus(MallOrderListVO.getOrderStatus()).getName());
+    public PageResult getMyOrders(PageQueryUtil pageUtil) throws BusinessException {
+        int total = mallOrderMapper.getTotalMallOrders(pageUtil);
+        List<MallOrderDO> orderDOS = mallOrderMapper.findMallOrderList(pageUtil);
+        if(total==0)
+            throw new BusinessException(EmBusinessError.ORDER_NOT_EXIST);
+        //可能有多个订单
+        List<MallOrderDetailVO> detailVOS = new ArrayList<>();
+        detailVOS = BeanUtil.copyList(orderDOS,MallOrderDetailVO.class);
+
+        List<Long> orderIds = orderDOS.stream().map(MallOrderDO::getOrderId).collect(Collectors.toList());
+        if(!orderDOS.isEmpty()){
+            List<MallOrderItemDO> itemDOS = mallOrderItemMapper.selectByOrderIds(orderIds);
+            List<Long> bookIds = itemDOS.stream().map(MallOrderItemDO::getGoodsId).collect(Collectors.toList());
+            List<BookDO> bookDOS = bookDOMapper.selectByPrimaryKeys(bookIds);
+            System.out.println(bookDOS.get(0).toString());
+            System.out.println(itemDOS.get(1).toString());
+
+            Map<Long,MallOrderItemDO> itemByBookIdMap = itemDOS.stream().collect(Collectors.toMap(MallOrderItemDO::getGoodsId,mallOrderItemDO->mallOrderItemDO));
+            Map<Long,BookDO> bookByBookIdMap = bookDOS.stream().collect(Collectors.toMap(BookDO::getBookId,bookDO -> bookDO));
+
+            for(Long book_id:bookByBookIdMap.keySet()){
+                if(itemByBookIdMap.containsKey(book_id)){
+                    MallOrderItemDO mallOrderItemDO = itemByBookIdMap.get(book_id);
+                    BookDO bookDO = bookByBookIdMap.get(book_id);
+                    String url = bookDO.getCoverUrl();
+                    mallOrderItemDO.setGoodsCoverImg(url);
+                    itemByBookIdMap.put(book_id,mallOrderItemDO);
+                }
             }
-            //获取所有的订单编号
-            List<Long> orderIds = MallOrders.stream().map(MallOrderDO::getOrderId).collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(orderIds)) {
-                //根据订单编号获取所有订单里购买的商品
-                List<MallOrderItemDO> orderItems = MallOrderItemMapper.selectByOrderIds(orderIds);
-                //将订单号和订单商品映射
-                Map<Long, List<MallOrderItemDO>> itemByOrderIdMap = orderItems.stream().collect(groupingBy(MallOrderItemDO::getOrderId));
-                //VO类是返回给前端的数据
-                for (MallOrderListVO MallOrderListVO : orderListVOS) {
-                    //封装每个订单列表对象的订单项数据
-                    if (itemByOrderIdMap.containsKey(MallOrderListVO.getOrderId())) {
-                        //获取每个订单对应的商品DO
-                        List<MallOrderItemDO> orderItemListTemp = itemByOrderIdMap.get(MallOrderListVO.getOrderId());
-                        //将MallOrderItem对象列表转换成MallOrderItemVO对象列表
-                        List<MallOrderItemVO> MallOrderItemVOS = BeanUtil.copyList(orderItemListTemp, MallOrderItemVO.class);
-                        //设置单个订单的所有商品VO
-                        MallOrderListVO.setMallOrderItemVOS(MallOrderItemVOS);
-                    }
+            itemDOS = new ArrayList<>(itemByBookIdMap.values());
+            Map<Long,List<MallOrderItemDO>> itemByOrderIdMap = itemDOS.stream().collect(groupingBy(MallOrderItemDO::getOrderId));
+
+            for(MallOrderDetailVO mallOrderDetailVO:detailVOS){
+                if(itemByOrderIdMap.containsKey(mallOrderDetailVO.getOrderId())){
+                    List<MallOrderItemDO> mallOrderItemDOS = itemByOrderIdMap.get(mallOrderDetailVO.getOrderId());
+                    List<MallOrderItemVO> mallOrderItemVOS = BeanUtil.copyList(mallOrderItemDOS,MallOrderItemVO.class);
+                    mallOrderDetailVO.setMallOrderItemVOS(mallOrderItemVOS);
                 }
             }
         }
-        PageResult pageResult = new PageResult(orderListVOS, total, pageUtil.getLimit(), pageUtil.getPage());
+        PageResult pageResult = new PageResult(detailVOS, total, pageUtil.getLimit(), pageUtil.getPage());
         return pageResult;
+
     }
 
     @Override
     public String cancelOrder(String orderNo, Long userId) {
-        MallOrderDO MallOrder = MallOrderMapper.selectByOrderNo(orderNo);
+        MallOrderDO MallOrder = mallOrderMapper.selectByOrderNo(orderNo);
         if (MallOrder != null) {
             //todo 验证是否是当前userId下的订单，否则报错
             //todo 订单状态判断
-            if (MallOrderMapper.closeOrder(Collections.singletonList(MallOrder.getOrderId()), MallOrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.getOrderStatus()) > 0) {
+            if (mallOrderMapper.closeOrder(Collections.singletonList(MallOrder.getOrderId()), MallOrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.getOrderStatus()) > 0) {
                 return ServiceResultEnum.SUCCESS.getResult();
             } else {
                 return ServiceResultEnum.DB_ERROR.getResult();
@@ -193,13 +199,13 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Override
     public String finishOrder(String orderNo, Long userId) {
-        MallOrderDO MallOrder = MallOrderMapper.selectByOrderNo(orderNo);
+        MallOrderDO MallOrder = mallOrderMapper.selectByOrderNo(orderNo);
         if (MallOrder != null) {
             //todo 验证是否是当前userId下的订单，否则报错
             //todo 订单状态判断
-            MallOrder.setOrderStatus((byte) MallOrderStatusEnum.ORDER_SUCCESS.getOrderStatus());
+            MallOrder.setOrderStatus(""+MallOrderStatusEnum.ORDER_SUCCESS.getOrderStatus());
 //            MallOrder.setUpdateTime(new Date());
-            if (MallOrderMapper.updateByPrimaryKeySelective(MallOrder) > 0) {
+            if (mallOrderMapper.updateByPrimaryKeySelective(MallOrder) > 0) {
                 return ServiceResultEnum.SUCCESS.getResult();
             } else {
                 return ServiceResultEnum.DB_ERROR.getResult();

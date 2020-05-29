@@ -71,7 +71,7 @@ public class MallOrderController {
         if (StringUtils.isEmpty(params.get("page"))) {
             params.put("page", 1);
         }
-        params.put("limit", Constants.ORDER_SEARCH_PAGE_LIMIT);
+        params.put("limit", 20);
         //封装我的订单数据
         PageQueryUtil pageUtil = new PageQueryUtil(params);
         PageResult pageResult = MallOrderService.getMyOrders(pageUtil);
@@ -96,7 +96,7 @@ public class MallOrderController {
     }
 
     @ApiOperation("完成订单")
-    @PutMapping("/finish")
+    @GetMapping("/finish")
     @ResponseBody
     public Result finishOrder(@RequestParam (name = "orderNo") String orderNo) throws BusinessException {
         UserModel user = userService.getUserByToken();
@@ -109,7 +109,7 @@ public class MallOrderController {
     }
 
     @ApiOperation("下单")
-    @GetMapping("/create")
+    @PostMapping("/create")
     @ResponseBody
     public String saveOrder() throws BusinessException {
         UserModel user = userService.getUserByToken();
