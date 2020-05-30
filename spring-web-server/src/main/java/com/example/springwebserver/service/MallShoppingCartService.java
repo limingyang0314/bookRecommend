@@ -30,7 +30,7 @@ public interface MallShoppingCartService {
      * @param mallShoppingCartItemId
      * @return
      */
-    MallShoppingCartItemVO getMallCartItemById(Long mallShoppingCartItemId);
+    MallShoppingCartItemVO getMallCartItemById(Long mallShoppingCartItemId) throws BusinessException;
 
     /**
      * 删除购物车中的商品
@@ -47,6 +47,6 @@ public interface MallShoppingCartService {
      * @return
      */
     List<MallShoppingCartItemVO> getMyShoppingCartItems( Long MallUserId);
-    List<MallShoppingCartItemVO> getMallCartItemById(List<Long> itemIds);
+    List<MallShoppingCartItemVO> getMallCartItemById(List<Long> itemIds) throws BusinessException;
     List<MallShoppingCartItemVO> saveMallCartItems(List<MallShoppingCartItemDO> mallShoppingCartItems) ;
 }

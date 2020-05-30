@@ -19,5 +19,6 @@ public class MallOrderItemVO implements Serializable {
     private String goodsCoverImg;
 
     private Integer sellingPrice;
+    private String createTime;
 
 }
