@@ -195,11 +195,12 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Override
     public String cancelOrder(String orderNo, Long userId) {
-        MallOrderDO MallOrder = mallOrderMapper.selectByOrderNo(orderNo);
-        if (MallOrder != null) {
+        MallOrderDO mallOrder = mallOrderMapper.selectByOrderNo(orderNo);
+        mallOrder.setOrderStatus("手动取消");
+        if (mallOrder != null) {
             //todo 验证是否是当前userId下的订单，否则报错
             //todo 订单状态判断
-            if (mallOrderMapper.closeOrder(Collections.singletonList(MallOrder.getOrderId()), MallOrderStatusEnum.ORDER_CLOSED_BY_MALLUSER.getOrderStatus()) > 0) {
+            if (mallOrderMapper.closeOrder(mallOrder.getOrderId(), mallOrder.getOrderStatus()) > 0) {
                 return ServiceResultEnum.SUCCESS.getResult();
             } else {
                 return ServiceResultEnum.DB_ERROR.getResult();
@@ -210,13 +211,12 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Override
     public String finishOrder(String orderNo, Long userId) {
-        MallOrderDO MallOrder = mallOrderMapper.selectByOrderNo(orderNo);
-        if (MallOrder != null) {
+        MallOrderDO mallOrder = mallOrderMapper.selectByOrderNo(orderNo);
+        if (mallOrder != null) {
             //todo 验证是否是当前userId下的订单，否则报错
             //todo 订单状态判断
-            MallOrder.setOrderStatus(""+MallOrderStatusEnum.ORDER_SUCCESS.getOrderStatus());
-//            MallOrder.setUpdateTime(new Date());
-            if (mallOrderMapper.updateByPrimaryKeySelective(MallOrder) > 0) {
+            mallOrder.setOrderStatus("订单完成");
+            if (mallOrderMapper.updateByPrimaryKeySelective(mallOrder) > 0) {
                 return ServiceResultEnum.SUCCESS.getResult();
             } else {
                 return ServiceResultEnum.DB_ERROR.getResult();
