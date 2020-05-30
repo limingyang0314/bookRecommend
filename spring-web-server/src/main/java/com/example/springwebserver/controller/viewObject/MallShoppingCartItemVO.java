@@ -22,5 +22,6 @@ public class MallShoppingCartItemVO implements Serializable {
     private String goodsCoverImg;
 
     private Integer sellingPrice;
+    private Integer totalPrice;
 
 }

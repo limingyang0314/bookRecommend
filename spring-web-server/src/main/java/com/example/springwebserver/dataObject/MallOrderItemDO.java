@@ -19,6 +19,7 @@ public class MallOrderItemDO {
     private Integer sellingPrice;
 
     private Integer goodsCount;
+    private String createTime;
 
 
     @Override

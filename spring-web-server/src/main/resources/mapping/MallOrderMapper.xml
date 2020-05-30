@@ -9,9 +9,10 @@
         <result column="order_status" jdbcType="VARCHAR" property="orderStatus"/>
         <result column="user_address" jdbcType="VARCHAR" property="userAddress"/>
         <result column="order_no" jdbcType="VARCHAR" property="orderNo"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
     </resultMap>
     <sql id="Base_Column_List">
-    order_id, user_id, total_price, order_status,user_address,order_no
+    order_id, user_id, total_price, order_status,user_address,order_no,create_time
     </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -57,6 +58,9 @@
             <if test="orderNo != null and orderNo != ''">
                 and order_no = #{orderNo}
             </if>
+            <if test="createTime != null and createTime != ''">
+                and create_time = #{createTime}
+            </if>
         </where>
 <!--        orddescer by create_time -->
         <if test="start!=null and limit!=null">
@@ -85,6 +89,9 @@
             <if test="orderNo != null and orderNo != ''">
                 and order_no = #{order_no}
             </if>
+            <if test="createTime != null and createTime != ''">
+                and create_time = #{createTime}
+            </if>
         </where>
     </select>
     <update id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -94,11 +101,12 @@
     <insert id="insert" parameterType="com.example.springwebserver.dataObject.MallOrderDO">
     insert into mall_order (order_id, user_id,
       total_price, order_status
-      user_address,order_no
+      user_address,order_no,create_time
         )
     values (#{orderId,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT},
       #{totalPrice,jdbcType=INTEGER}, #{orderStatus,jdbcType=TINYINT},
-       #{userAddress,jdbcType=VARCHAR}, #{orderNo,jdbcType=VARCHAR}
+       #{userAddress,jdbcType=VARCHAR}, #{orderNo,jdbcType=VARCHAR},
+        #{createTime,jdbcType=VARCHAR}
       )
   </insert>
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="orderId"
@@ -124,6 +132,9 @@
             <if test="orderNo != null">
                 order_no,
             </if>
+            <if test="createTime != null">
+                create_time
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="orderId != null">
@@ -145,36 +156,21 @@
             <if test="orderNo != null">
                 #{orderNo,jdbcType=VARCHAR},
             </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
     <update id="closeOrder">
         update mall_order
         set order_status = #{orderStatus}
-        where order_id in
-        <foreach collection="orderIds" item="item" index="index"
-                 open="(" separator="," close=")">#{item}
-        </foreach>
+        where order_id = #{orderId}
     </update>
     <update id="updateByPrimaryKeySelective" parameterType="com.example.springwebserver.dataObject.MallOrderDO">
         update mall_order
         <set>
-            <if test="orderNo!=null and orderNo!=''">
-                and order_no = #{orderNo}
-            </if>
-            <if test="userId!=null and userId!=''">
-                and user_id = #{userId}
-            </if>
-            <if test="totalPrice!=null and totalPrice!=''">
-                and total_price = #{totalPrice}
-            </if>
             <if test="orderStatus!=null and orderStatus!=''">
-                and order_status = #{orderStatus}
-            </if>
-            <if test="userAddress!=null and userAddress!=''">
-                and user_address = #{user_address}
-            </if>
-            <if test="orderNo != null and orderNo != ''">
-                and order_no = #{order_no}
+                order_status = #{orderStatus}
             </if>
         </set>
         where order_id = #{orderId,jdbcType=BIGINT}
@@ -188,6 +184,7 @@
       extra_info = #{extraInfo,jdbcType=VARCHAR},
       user_address = #{userAddress,jdbcType=VARCHAR},
         order_no = #{orderNo,jdbcType=VARCHAR},
+        create_time = #{createTime,jdbcType=VARCHAR}
     where order_id = #{orderId,jdbcType=BIGINT}
   </update>
 </mapper>

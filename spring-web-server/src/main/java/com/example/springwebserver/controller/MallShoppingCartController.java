@@ -23,10 +23,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller("shopping")
 @RequestMapping("/shopping")
@@ -58,23 +55,16 @@ public class MallShoppingCartController {
     @ApiOperation("添加图书到购物车")
     @PostMapping("/add")
     @ResponseBody
-    public CommonReturnType saveMallShoppingCartItem(@RequestBody Map<String,Long> map) throws BusinessException {
+    public CommonReturnType saveMallShoppingCartItem(@RequestParam(name = "bookId") Long bookId,@RequestParam(name = "count")int count) throws BusinessException {
         UserModel user = userService.getUserByToken();
-        List<Long> itemIds = new ArrayList<Long>(map.values());
-        Map<BookModel,Integer> bookmap = new HashMap<>();
-        for(Long itemId:itemIds) {
-            BookModel book = bookService.getBookById(itemId);
-            bookmap.put(book,bookmap.getOrDefault(book,0)+1);
-        }
+        BookModel book = bookService.getBookById(bookId);
         List<MallShoppingCartItemDO> mallShoppingCartItemDOS = new ArrayList();
-        for(BookModel book:bookmap.keySet()){
-            MallShoppingCartItemDO mallShoppingCartItemDO = new MallShoppingCartItemDO();
-            mallShoppingCartItemDO.setGoodsCount(bookmap.get(book));
-            mallShoppingCartItemDO.setUserId(user.getUserId());
-            mallShoppingCartItemDO.setGoodsId(book.getBookId());
-            mallShoppingCartItemDO.setIsDeleted((byte)0);
-            mallShoppingCartItemDOS.add(mallShoppingCartItemDO);
-        }
+        MallShoppingCartItemDO mallShoppingCartItemDO = new MallShoppingCartItemDO();
+        mallShoppingCartItemDO.setGoodsCount(count);
+        mallShoppingCartItemDO.setUserId(user.getUserId());
+        mallShoppingCartItemDO.setGoodsId(book.getBookId());
+        mallShoppingCartItemDO.setIsDeleted((byte)0);
+        mallShoppingCartItemDOS.add(mallShoppingCartItemDO);
         //todo 判断数量
         List<MallShoppingCartItemVO> mallShoppingCartItemVOS = mallShoppingCartService.saveMallCartItems(mallShoppingCartItemDOS);
 
@@ -95,6 +85,8 @@ public class MallShoppingCartController {
     public CommonReturnType deleteMallShoppingCartItem(@RequestParam(name = "mallShoppingCartItemId") long mallShoppingCartItemId) throws BusinessException {
         UserModel user = userService.getUserByToken();
         Boolean delete_result = mallShoppingCartService.deleteById(mallShoppingCartItemId);
+        Date date = new Date();
+        date.getTime();
         return CommonReturnType.create(delete_result);
     }
 

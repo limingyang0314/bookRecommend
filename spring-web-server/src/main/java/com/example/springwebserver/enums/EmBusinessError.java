@@ -31,6 +31,7 @@ public enum EmBusinessError implements CommonError {
     NULL_ADDRESS_ERROR(310,"address is not exist"),
     SHOPPING_ITEM_ERROR(311,"shopping item is empty"),
     DB_ERROR(312,"database has error"),
+    SHOPPING_ITEM_NOT_EXIST(313,"shopping item is not in your cart"),
 
     // 40 start with, about reviews and ratings
     REVIEW_NOT_EXIST(401,"review not exist or you are not author");

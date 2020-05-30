@@ -30,7 +30,7 @@ public interface MallOrderMapper {
 
     int checkOut(@Param("orderIds") List<Long> orderIds);
 
-    int closeOrder(@Param("orderIds") List<Long> orderIds, @Param("orderStatus") int orderStatus);
+    int closeOrder(@Param("orderId") Long orderId, @Param("orderStatus") String orderStatus);
 
     int checkDone(@Param("orderIds") List<Long> asList);
 

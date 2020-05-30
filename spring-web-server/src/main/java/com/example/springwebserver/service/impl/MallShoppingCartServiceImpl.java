@@ -74,8 +74,10 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
 
 
     @Override
-    public MallShoppingCartItemVO getMallCartItemById(Long mallShoppingCartItemId) {
+    public MallShoppingCartItemVO getMallCartItemById(Long mallShoppingCartItemId) throws BusinessException {
         MallShoppingCartItemDO mallShoppingCartItemDO = mallShoppingCartItemMapper.selectByPrimaryKey(mallShoppingCartItemId);
+        if(mallShoppingCartItemDO==null)
+            throw new BusinessException(EmBusinessError.SHOPPING_ITEM_NOT_EXIST);
         BookDO bookDO = bookDOMapper.selectByPrimaryKey(mallShoppingCartItemDO.getGoodsId());
         MallShoppingCartItemVO mallShoppingCartItemVO = new MallShoppingCartItemVO();
         BeanUtil.copyProperties(mallShoppingCartItemDO,mallShoppingCartItemVO);
@@ -116,6 +118,8 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
                     }
                     mallShoppingCartItemVO.setGoodsName(goodsName);
                     mallShoppingCartItemVO.setSellingPrice(mallGoodsDOTemp.getPrice());
+                    mallShoppingCartItemVO.setGoodsCoverImg(mallGoodsDOTemp.getCoverUrl());
+                    mallShoppingCartItemVO.setTotalPrice(mallShoppingCartItemVO.getGoodsCount()*mallShoppingCartItemVO.getSellingPrice());
                     mallShoppingCartItemVOS.add(mallShoppingCartItemVO);
                 }
             }
@@ -124,7 +128,7 @@ public class MallShoppingCartServiceImpl implements MallShoppingCartService {
     }
 
     @Override
-    public List<MallShoppingCartItemVO> getMallCartItemById(List<Long> itemIds) {
+    public List<MallShoppingCartItemVO> getMallCartItemById(List<Long> itemIds) throws BusinessException {
         List<MallShoppingCartItemVO> mallShoppingCartItemVOS = new ArrayList<>();
         for(Long itemid : itemIds){
             MallShoppingCartItemVO mallShoppingCartItemVO = getMallCartItemById(itemid);

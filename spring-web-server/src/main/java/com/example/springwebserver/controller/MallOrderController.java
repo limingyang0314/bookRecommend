@@ -29,10 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller("order")
 @RequestMapping("/order")
@@ -112,8 +109,9 @@ public class MallOrderController {
     @ApiOperation("下单")
     @PostMapping("/create")
     @ResponseBody
-    public String saveOrder(@RequestBody Map<String,Long> map) throws BusinessException {
-        List<Long> orderIds = new ArrayList<>(map.values());
+    public String saveOrder(@RequestParam(value = "itemIds[]")Long[] itemIds) throws BusinessException {
+        List<Long> orderIds = new ArrayList<>();
+        Collections.addAll(orderIds,itemIds);
         UserModel user = userService.getUserByToken();
         List<MallShoppingCartItemVO> myShoppingCartItems = mallShoppingCartService.getMallCartItemById(orderIds);
         if (CollectionUtils.isEmpty(myShoppingCartItems)) {

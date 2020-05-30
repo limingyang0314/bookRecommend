@@ -14,6 +14,7 @@ public class MallOrderDO {
     private String orderStatus;
     private String userAddress;
     private String orderNo;
+    private String createTime;
 
     @Override
     public String toString() {
