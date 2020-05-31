@@ -50,6 +50,8 @@ public class BookVO implements Serializable {
 
     private List<String> tagIds;
 
+    private List<String> tags;
+
     private Integer page;
 
     private BigDecimal price;
