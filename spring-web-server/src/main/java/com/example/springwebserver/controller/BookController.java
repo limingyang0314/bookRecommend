@@ -125,7 +125,8 @@ public class BookController extends GlobalExceptionHandler {
 
         //标签热度自增
         List<String> tagIds = data.getTagIds();
-        tagDOMapper.tagHotValInc(tagIds);
+        if(tagIds != null && !tagIds.isEmpty())
+            tagDOMapper.tagHotValInc(tagIds);
 
         return CommonReturnType.create(vo);
     }
