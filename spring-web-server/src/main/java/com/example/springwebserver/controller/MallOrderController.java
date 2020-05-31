@@ -109,7 +109,7 @@ public class MallOrderController {
     @ApiOperation("下单")
     @PostMapping("/create")
     @ResponseBody
-    public String saveOrder(@RequestParam(value = "itemIds[]")Long[] itemIds) throws BusinessException {
+    public CommonReturnType saveOrder(@RequestParam(value = "itemIds[]") Long[] itemIds) throws BusinessException {
         List<Long> orderIds = new ArrayList<>();
         Collections.addAll(orderIds,itemIds);
         UserModel user = userService.getUserByToken();
@@ -121,7 +121,7 @@ public class MallOrderController {
         //保存订单并返回订单号
         String saveOrderResult = mallOrderService.saveOrder(user, myShoppingCartItems);
         //跳转到订单详情页
-        return saveOrderResult;
+        return CommonReturnType.create(saveOrderResult);
     }
 
 }
