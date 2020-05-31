@@ -3,15 +3,17 @@ package com.example
 import java.text.SimpleDateFormat
 
 import com.example.utils.ModelUtil
+import org.apache.hadoop.hbase.client.Result
+import org.apache.hadoop.hbase.io.ImmutableBytesWritable
 import org.apache.spark.broadcast.Broadcast
 import org.apache.spark.ml.recommendation.ALSModel
-
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
 
 object Recall {
 
   val colALS = "als"
+  val colItem2Item = "item2item"
 
   def main(args: Array[String]): Unit = {
 
@@ -22,11 +24,16 @@ object Recall {
       .enableHiveSupport()
       .getOrCreate()
 
+
     spark.sparkContext.setLogLevel("ERROR")
 
     val modelUtil = ModelUtil(spark)
     val data: DataFrame = modelUtil.getUserItemRating
 
+    // val data = modelUtil.getTextData
+    // modelUtil.saveRecallMySQL(data, data, "append")
+    // modelUtil.saveRecall(data, colALS)
+    // modelUtil.saveRecall(data, colItem2Item)
 
     val als = ALSRecall(data)
 
@@ -40,16 +47,13 @@ object Recall {
 
     val model: ALSModel = als.getModel(maxIter, rank, reg, alpha)
     val alsRecallData = als.getALSRecall(model, spark)
-
-    // modelUtil.saveRecall(alsRecallData, colALS, "user")
-
-
-    val colItem2Item = "item2item"
+    // modelUtil.saveRecall(alsRecallData, colALS)
 
     // val format = new SimpleDateFormat("yyyy-MM-dd")
     // val date = format.format(new Date())
-    // val path = "./model/als_model/" + date + "/itemFactors"
+    // val path = "file:///G:/big-data/BookRecommend/model/als_model/2020-05-28/itemFactors"
     // val itemFactors = spark.read.parquet(path)
+    //  itemFactors.show()
 
     val item2Item = Item2ItemRecall()
 
@@ -58,9 +62,9 @@ object Recall {
     val itemCosSimBd: Broadcast[DataFrame] = spark.sparkContext.broadcast(itemCosSim)
 
     val item2ItemRecallData = item2Item.getItem2ItemRecall(data, itemCosSimBd, spark)
+     modelUtil.saveRecall(alsRecallData, colItem2Item)
 
-
-    modelUtil.saveRecall(alsRecallData, item2ItemRecallData, colItem2Item, "user", "overwrite")
+     modelUtil.saveRecallMySQL(alsRecallData, item2ItemRecallData, "append")
 
 
     spark.stop()

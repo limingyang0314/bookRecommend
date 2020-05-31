@@ -74,7 +74,7 @@ object Apriori {
       pre_f = _f
     }
 
-    modelUtil.saveRecommend(pre_f.map(_.toSeq).toList, "overwrite")
+    modelUtil.saveRecommend(pre_f.map(_.toSeq).toList, "append")
   }
 
   def candidateF(f_1: Array[mutable.Set[Long]],

@@ -13,7 +13,7 @@ import org.apache.hadoop.mapreduce.Job
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{DataFrame, SparkSession}
 
-class HBaseUtil(spark: SparkSession) {
+class HBaseUtil(spark: SparkSession) extends Serializable {
 
   private val hBaseConfig = HBaseConfiguration.create()
   private val sc = spark.sparkContext
@@ -49,17 +49,17 @@ class HBaseUtil(spark: SparkSession) {
               column: String
              ) : Unit = {
 
-    // val jobConf = new JobConf(hBaseConfig, this.getClass)
-    // jobConf.setOutputFormat(classOf[TableOutputFormat])
-    // jobConf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
+     val jobConf = new JobConf(hBaseConfig, this.getClass)
+     jobConf.setOutputFormat(classOf[TableOutputFormat])
+     jobConf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
 
     // 新API
-    // val jobConf = new JobConf(hBaseConfig, this.getClass)
-    // jobConf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
-    // val job = Job.getInstance(jobConf)
-    // job.setOutputKeyClass(classOf[ImmutableBytesWritable])
-    // job.setOutputValueClass(classOf[Result])
-    // job.setOutputFormatClass(classOf[TableOutputFormat[ImmutableBytesWritable]])
+//     val jobConf = new JobConf(hBaseConfig, this.getClass)
+//     jobConf.set(TableOutputFormat.OUTPUT_TABLE, tableName)
+//     val job = Job.getInstance(jobConf)
+//     job.setOutputKeyClass(classOf[ImmutableBytesWritable])
+//     job.setOutputValueClass(classOf[Result])
+//     job.setOutputFormatClass(classOf[TableOutputFormat[ImmutableBytesWritable]] )
 
     val _data = data.rdd.map(x => {
       val uid = x.getInt(0)
@@ -73,10 +73,8 @@ class HBaseUtil(spark: SparkSession) {
       (new ImmutableBytesWritable, put)
 
     })
-    //_data.saveAsHadoopDataset(jobConf)
 
-    // 新API
-    // data.saveAsNewAPIHadoopDataset(job.getConfiguration)
+    _data.saveAsHadoopDataset(jobConf)
 
     // _data.saveAsNewAPIHadoopDataset(job.getConfiguration)
   }

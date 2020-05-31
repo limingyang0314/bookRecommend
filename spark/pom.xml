@@ -15,6 +15,12 @@
     <modules>
         <module>Recall</module>
         <module>Relate</module>
+        <module>Online</module>
+        <module>DataCleaning</module>
+        <module>UserIBookRating</module>
+        <module>Rank</module>
+        <module>FTRL</module>
+        <module>Streaming</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -65,9 +71,26 @@
             </dependency>
 
             <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka_${kafka.artifactId}</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector.artifactId}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>1.2.68</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

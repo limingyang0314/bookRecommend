@@ -40,7 +40,7 @@ object FPGrowth {
       .filter(_.length >= 2)
       .collect().toList
 
-    modelUtil.saveRecommend(list, "overwrite")
+    modelUtil.saveRecommend(list, "append")
 
   }
 

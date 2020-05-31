@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+
+<configuration>
+ <property>
+	  <name>javax.jdo.option.ConnectionURL</name>
+	  <value>jdbc:mysql://localhost:3306/hive?createDatabaseIfNotExist=true&amp;serverTimezone=Asia/Shanghai</value>
+	</property>
+
+	<property>
+	  <name>javax.jdo.option.ConnectionDriverName</name>
+	  <value>com.mysql.cj.jdbc.Driver</value>
+	</property>
+
+	<property>
+	  <name>javax.jdo.option.ConnectionUserName</name>
+	  <value>root</value>
+	</property>
+
+	<property>
+	  <name>javax.jdo.option.ConnectionPassword</name>
+	  <value>HqhMIKASA</value>
+	</property>
+
+    <property>
+        <name>beeline.hs2.connection.user</name>
+        <value>hive</value>
+    </property>
+    <property>
+        <name>beeline.hs2.connection.password</name>
+        <value>hive</value>
+    </property>
+    <property>
+        <name>hive.server2.authentication</name>
+        <value>NONE</value>
+    </property>
+
+    <property>
+	    <name>hive.metastore.warehouse.dir</name>
+	    <value>/hive/warehouse</value>
+	</property>
+
+    <property>
+        <name>hive.exec.scratchdir</name>
+        <!--hive的临时数据目录，指定的位置在hdfs上的目录-->
+        <value>/tmp/hive</value>
+    </property>
+    <property>
+        <name>hive.exec.local.scratchdir</name>
+        <!--本地目录-->
+        <value>G:/big-data/apache-hive-3.1.2-bin/hive/iotmp</value>
+        <description>Local scratch space for Hive jobs</description>
+    </property>
+    <property>
+        <name>hive.downloaded.resources.dir</name>
+        <!--本地目录-->
+        <value>G:/big-data/apache-hive-3.1.2-bin/hive/iotmp</value>
+        <description>Temporary local directory for added resources in the remote file system.</description>
+    </property>
+    <property>
+        <name>hive.querylog.location</name>
+        <!--本地目录-->
+        <value>G:\big-data\apache-hive-3.1.2-bin\hive\iotmp</value>
+        <description>Location of Hive run time structured log file</description>
+    </property>
+
+	<property>
+	  <name>hive.cli.print.header</name>
+	  <value>true</value>
+	</property>
+
+	<property>
+	  <name>hive.cli.print.current.db</name>
+	  <value>true</value>
+	</property>
+
+
+    <property>
+        <name>datanucleus.autoCreateSchema</name>
+        <value>true</value>
+    </property>
+    
+    <property>
+        <name>datanucleus.autoCreateTables</name>
+        <value>true</value>
+    </property>
+    
+    <property>
+        <name>datanucleus.autoCreateColumns</name>
+        <value>true</value>
+    </property>
+
+    <property>
+        <name>hive.server2.logging.operation.log.location</name>
+        <value>G:/big-data/apache-hive-3.1.2-bin/hive/operationdir</value>
+        <description>Top level directory where operation logs are stored if logging functionality is enabled</description>
+    </property>
+
+
+    <property>
+        <name>hive.server2.thrift.port</name>
+        <value>10004</value>
+    </property>
+
+	<!--Hive 3.x 默认打开了ACID，Spark不支持读取 ACID 的 Hive,需要关闭ACID-->
+        <property>
+            <name>hive.strict.managed.tables</name>
+            <value>false</value>
+        </property>
+        <property>
+            <name>hive.create.as.insert.only</name>
+            <value>false</value>
+        </property>
+        <property>
+            <name>metastore.create.as.acid</name>
+            <value>false</value>
+        </property>
+
+	<!--关闭版本验证-->
+        <property>
+            <name>hive.metastore.schema.verification</name>
+            <value>false</value>
+        </property>
+</configuration>

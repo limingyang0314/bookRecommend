@@ -121,6 +121,6 @@ class Item2ItemRecall extends Serializable {
   }
 }
 
-object Item2ItemRecall{
+object Item2ItemRecall {
   def apply(): Item2ItemRecall = new Item2ItemRecall
 }

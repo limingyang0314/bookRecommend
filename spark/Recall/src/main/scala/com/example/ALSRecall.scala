@@ -53,6 +53,7 @@ class ALSRecall(data: DataFrame) {
       // handle cold start
       model.setColdStartStrategy("drop")
       val predict = model.transform(test)
+
       val rmse = getEvaluate(predict)
 
       listMSE += rmse
@@ -65,9 +66,8 @@ class ALSRecall(data: DataFrame) {
 
     val format = new SimpleDateFormat("yyyy-MM-dd")
     val date = format.format(new Date())
-    val modelPath = "./model/als_model/" + date
-
-    // bestModel.save(modelPath)
+    val modelPath = "/model/als_model/" + date
+    bestModel.write.overwrite().save(modelPath)
 
     bestModel
 
@@ -109,6 +109,6 @@ class ALSRecall(data: DataFrame) {
   }
 }
 
-object ALSRecall{
+object ALSRecall {
   def apply(data: DataFrame): ALSRecall = new ALSRecall(data)
 }
