@@ -22,6 +22,10 @@
         </dependency>
         <dependency>
             <groupId>org.apache.spark</groupId>
+            <artifactId>spark-mllib_${spark.artifact}</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.spark</groupId>
             <artifactId>spark-streaming_${spark.artifact}</artifactId>
         </dependency>
         <dependency>

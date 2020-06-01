@@ -18,7 +18,8 @@ class ModelUtil(spark: SparkSession) {
     val format = new SimpleDateFormat("yyyy-MM-dd")
     val date = format.format(new Date())
 
-    val modelPath = "/model/als_model/" + date
+    // val modelPath = "/model/als_model/" + date
+    val modelPath = "/model/als_model/2020-05-31"
     val itemFactors = spark.read.parquet(modelPath + "/itemFactors")
       .withColumnRenamed("id", "book_id")
       .withColumnRenamed("features", "book_features")
@@ -68,7 +69,7 @@ class ModelUtil(spark: SparkSession) {
         .withColumn("book_features", toVector(col("book_features")))
 
       data.printSchema()
-      data.show(5)
+
       println(Vector.isInstanceOf[VectorUDT])
 
     data
