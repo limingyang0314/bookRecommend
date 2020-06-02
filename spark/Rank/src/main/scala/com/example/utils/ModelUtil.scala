@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 
-import org.apache.spark.mllib.linalg.{Vector, VectorUDT, Vectors}
+import org.apache.spark.ml.linalg.{Vector, VectorUDT, Vectors}
 import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.apache.spark.sql.functions._
 
@@ -39,38 +39,23 @@ class ModelUtil(spark: SparkSession) {
 
     import spark.implicits._
 
-    val toVector = udf((value: Array[Float]) => {
-
-      Vectors.dense(value.map(_.toDouble))
+    val toVector = udf((value: Seq[Float]) => {
+      Vectors.dense(value.map(_.toDouble).toArray)
     })
-
-    val cancatFeatures = udf((s: Double, f1: Array[Float], f2: Array[Float]) => {
-      val data = mutable.ArrayBuffer[Double](s)
-      for (i <- f1.indices) {
-        data :+ f1(i).toDouble
-      }
-      for (i <- f2.indices) {
-        data :+ f2(i).toDouble
-      }
-
-      Vectors.dense(data.toArray)
-    })
-
-
 
     val data = userFactors.crossJoin(itemFactors)
       .join(actions, Seq[String]("user_id", "book_id")).na.fill(0.0)
       .withColumn("click", getLabel(col("clicked")))
-      .select(col("click"), col("score"), col("user_features"), col("book_features"))
+      .select(
+        col("user_id"), col("book_id"),
+        col("click"), col("score"),
+        col("user_features"),
+        col("book_features"))
 //        .withColumn("features",
 //          cancatFeatures(col("score"), col("user_features"), col("book_features")))
 //        .drop("user_features", "book_features","score")
         .withColumn("user_features", toVector(col("user_features")))
         .withColumn("book_features", toVector(col("book_features")))
-
-      data.printSchema()
-
-      println(Vector.isInstanceOf[VectorUDT])
 
     data
   }
