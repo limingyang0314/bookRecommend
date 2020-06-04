@@ -36,7 +36,9 @@ public class OperaFormat {
                     object,
                     EventModel.class);
             if (eventData != null) {
-                eventData.setTagIds(tagString);
+                if (tagString != null) {
+                    eventData.setTagIds(tagString);
+                }
 
                 writeToHDFS(eventData, time);
             }

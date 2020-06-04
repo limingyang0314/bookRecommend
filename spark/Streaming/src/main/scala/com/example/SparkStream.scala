@@ -1,12 +1,16 @@
 package com.example
 
+import com.example.model.EventModel
 import com.example.utils.{Decode, ModelUtil}
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.spark.streaming.{Duration, StreamingContext}
 import kafka.Kafka
+import org.apache.spark.ml.classification.LogisticRegressionModel
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.streaming.kafka010.{ConsumerStrategies, KafkaUtils, LocationStrategies}
 import org.apache.spark.streaming.{Seconds, StreamingContext}
+
+import scala.collection.mutable
 
 object SparkStream {
   def main(args: Array[String]) {
@@ -42,7 +46,7 @@ object SparkStream {
 
     kafkaStream.map(record => (record.key, record.value))
         .foreachRDD {
-          rdds => rdds.foreach {
+          rdd => rdd.foreach {
             case (k, v) =>
               modelUtil.saveAction(Decode.handleData(v))
           }

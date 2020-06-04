@@ -28,11 +28,13 @@ class LRModel(spark: SparkSession) {
       .setFeaturesCol("features")
       .setMaxIter(500)
 
+
     val lrModel = lr.fit(trainFeature)
 
-    lrModel.write.overwrite().save("/models/lr/lr.obj")
+    lrModel.write.overwrite().save("/model/lr")
 
     lrModel
+
   }
 
   def getData: Dataset[_] = {

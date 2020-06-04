@@ -2,6 +2,7 @@ package com.example.utils;
 
 import org.apache.commons.lang.StringUtils;
 
+import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -12,7 +13,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.model.EventModel;
 
-public class Decode {
+public class Decode implements Serializable {
     private static Base64.Decoder decoder = Base64.getDecoder();
 
     private static String doDecode(String code) throws Exception {
@@ -40,7 +41,9 @@ public class Decode {
                     object,
                     EventModel.class);
             if (eventData != null) {
-                eventData.setTagIds(tagString);
+                if (tagString != null) {
+                    eventData.setTagIds(tagString);
+                }
                 eventData.setYear(year);
                 eventData.setMonth(month);
                 eventData.setDay(day);

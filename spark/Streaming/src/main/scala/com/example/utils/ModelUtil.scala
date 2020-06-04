@@ -1,36 +1,44 @@
 package com.example.utils
 
 import java.util
-import java.util.UUID
 
+import com.example.model.FTRL
 import org.apache.spark.sql.functions._
 import com.example.model.EventModel
 import org.apache.spark.ml.classification.{LogisticRegression, LogisticRegressionModel}
+import org.apache.spark.ml.feature.VectorAssembler
+import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.{DataFrame, DataFrameReader, Dataset, Row, SparkSession}
 
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
-class ModelUtil(spark: SparkSession) {
+class ModelUtil(spark: SparkSession) extends Serializable {
 
-  val jdbcDF: DataFrameReader = spark.read.format("jdbc")
-    .option("url", "jdbc:mysql://rm-bp14h269ydw6qq5h50o.mysql.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai")
-    .option("driver", "com.mysql.cj.jdbc.Driver")
-    .option("user", "book_recommend")
-    .option("password", "dawangba1A")
+  def getJdbcDF: DataFrameReader ={
+    spark.read.format("jdbc")
+      .option("url", "jdbc:mysql://rm-bp14h269ydw6qq5h50o.mysql.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai")
+      .option("driver", "com.mysql.cj.jdbc.Driver")
+      .option("user", "book_recommend")
+      .option("password", "dawangba1A")
+  }
 
   def saveAction(list: util.List[EventModel]): Unit = {
-    val value = mutable.Seq[EventModel]()
+    val value = ArrayBuffer[(String, Long, Long, String, String, Int, Int, Int, Int)]()
     for (i <- 0 until list.size()) {
-      value :+ list.get(i)
+      val x = list.get(i)
+      value += ((x.getUuid, x.getUserId.toLong, x.getBookId.toLong, x.getTagIds, x.getAction, x.getYear.intValue(), x.getMonth.intValue(), x.getDay.intValue(), x.getHour.intValue()))
     }
 
-    import spark.implicits._
-    val data = value.map(x => {
-      val uuid = UUID.randomUUID().toString
-      (uuid, x.getUserId, x.getBookId, x.getTagIds, x.getAction, x.getYear, x.getMonth, x.getDay, x.getHour)
-    }).toDF("user_id", "book_is", "tagids", "action", "year", "month", "day", "hour")
+    value.foreach(println)
 
-    data.write.mode("append").insertInto("online_action")
+    import spark.implicits._
+    val data = value.toDF("uuid", "user_id", "book_id", "tagIds", "action", "year", "month", "day", "hour")
+
+    data.show()
+//    recommendUser(data)
+//
+//    data.write.mode("append").insertInto("online_action")
   }
 
   def writeToDB(res: DataFrame): Unit = {
@@ -42,30 +50,63 @@ class ModelUtil(spark: SparkSession) {
      res.write.mode("append")
        .jdbc(
          "jdbc:mysql://rm-bp14h269ydw6qq5h50o.mysql.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai",
-         "users_recall",
+         "users_recommend",
          prop
        )
   }
 
-  def lrRank(list: Dataset[Row]): Dataset[Row] = {
+  def getVectorFeature(training: DataFrame): Dataset[_] = {
+    val vector = new VectorAssembler()
+      .setInputCols(Array("score", "user_features", "book_features"))
+      .setOutputCol("features")
+
+    vector.transform(training).drop("score", "user_features", "book_features")
+  }
+
+  def lrRank(list: DataFrame): DataFrame = {
     val modelPath = "/model/lr/lr.obj"
     val lrModel = LogisticRegressionModel.load(modelPath)
-    lrModel.transform(list)
+    val ftrl = FTRL(lrModel.coefficientMatrix.toArray)
+
+    val recall = getVectorFeature(list)
+    var count = -1
+    val fitData = recall.select("features").rdd
+        .map(row => {
+          count += 1
+          (count, Vectors.dense(row.getAs[Seq[Double]](0).toArray))
+        })
+
+    ftrl.fit(fitData, 1)
+
+    
+    lrModel.transform(recall)
   }
 
   def recommendUser(data: DataFrame): Unit = {
 
-    val userRecall = jdbcDF.option("dbtable", "users_recommend")
+    // val modelPath = "/model/als_model/" + date
+    val modelPath = "/model/als_model/2020-05-31"
+    val itemFactors = spark.read.parquet(modelPath + "/itemFactors")
+      .withColumnRenamed("id", "book_id")
+      .withColumnRenamed("features", "book_features")
+    val userFactors = spark.read.parquet(modelPath + "/userFactors")
+      .withColumnRenamed("id", "user_id")
+      .withColumnRenamed("features", "user_features")
+
+    val factors = itemFactors.crossJoin(userFactors)
+
+    val userRecall = getJdbcDF.option("dbtable", "users_recommend")
         .load()
 
-    val bookRecall = jdbcDF.option("dbtable", "books_recommend")
+    val bookRecall = getJdbcDF.option("dbtable", "books_recommend")
       .load()
 
     val books = spark.sql("select * from book_recommend.user_book_rating")
 
     val list = data.join(bookRecall, Seq[String]("book_id")).join(userRecall, "user_id")
-      .join(books, Seq[String]("book_id", "user_id"))
+      .join(books, Seq[String]("book_id", "user_id")).join(factors, Seq[String]("book_id", "user_id"))
       .orderBy(col("score").desc).limit(50)
+      .select("user_id", "book_id", "score", "book_features", "user_features")
 
     val res = lrRank(list)
 

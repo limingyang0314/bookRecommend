@@ -28,6 +28,6 @@ object Rank {
 
     val data = lr.getRank(lrModel)
 
-    modelUtil.saveResult(data)
+    // modelUtil.saveResult(data)
   }
 }
