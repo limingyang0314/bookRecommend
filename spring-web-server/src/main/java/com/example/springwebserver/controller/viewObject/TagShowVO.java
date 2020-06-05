@@ -1,6 +1,7 @@
 package com.example.springwebserver.controller.viewObject;
 
 import com.example.springwebserver.service.model.BookModel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
@@ -17,6 +18,7 @@ public class TagShowVO implements Serializable {
 
     private Long tagHot;
 
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<BookModel> hotBooks;
 
     public void setHotBooks(List<BookModel> hotBooks){ this.hotBooks = hotBooks; }

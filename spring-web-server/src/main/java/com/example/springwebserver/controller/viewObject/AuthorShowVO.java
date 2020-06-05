@@ -13,7 +13,7 @@ public class AuthorShowVO implements Serializable {
 
     private Integer countryId;
 
-    private Long author_hot;
+    private Long authorHot;
 
     private List<BookModel> hotBooks;
 
@@ -25,10 +25,10 @@ public class AuthorShowVO implements Serializable {
         return hotBooks;
     }
 
-    public void setAuthor_hot(Long author_hot){ this.author_hot = author_hot; };
+    public void setAuthorHot(Long author_hot){ this.authorHot = author_hot; };
 
-    public Long getAuthor_hot() {
-        return author_hot;
+    public Long getAuthorHot() {
+        return authorHot;
     }
 
     public Long getAuthorId() {

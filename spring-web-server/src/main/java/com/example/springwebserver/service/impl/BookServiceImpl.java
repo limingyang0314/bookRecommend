@@ -147,7 +147,7 @@ public class BookServiceImpl implements BookService {
     }
 
     public List<BookModel> listBookByHotAuthor(Long authorID){
-        List<BookDO> bookList = bookDOMapper.listBookByHotTag(authorID);
+        List<BookDO> bookList = bookDOMapper.listBookByHotAuthor(authorID);
         return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
     }
 
@@ -199,13 +199,17 @@ public class BookServiceImpl implements BookService {
             bookModel.setTagIds(Arrays.asList(tagIds));
             List<TagDO> tags = tagDOMapper.listTagByTagIDs(bookModel.getTagIds());
             List<String> tagsString = new ArrayList<String>();
-            System.out.println(tags);
+            //System.out.println(tags);
             for(TagDO t : tags){
                 tagsString.add(t.getTagName());
             }
-            System.out.println(tagsString);
+            //System.out.println(tagsString);
             bookModel.setTags(tagsString);
         }
+        //读者热度升级
+        AuthorDO author = authorDOMapper.selectByPrimaryKey(bookModel.getAuthorId());
+        author.setAuthorHot(author.getAuthorHot() + 1);
+        authorDOMapper.updateByPrimaryKeySelective(author);
 
         if (!StringUtils.isEmpty(bookDO.getSellerlist())) {
             String[] sellers = bookDO.getSellerlist().split(";");
@@ -222,7 +226,7 @@ public class BookServiceImpl implements BookService {
                 try {
                     seller = new BookModel.Seller(temp[0], new BigDecimal(temp[1].trim()));
                 } catch (NumberFormatException e) {
-                    System.out.println(bookDO.getSellerlist());
+                    //System.out.println(bookDO.getSellerlist());
                     continue;
                 }
 

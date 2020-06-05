@@ -4,6 +4,7 @@ package com.example.springwebserver.controller;
 import com.example.springwebserver.controller.viewObject.AuthorShowVO;
 import com.example.springwebserver.controller.viewObject.TagShowVO;
 import com.example.springwebserver.dao.AuthorDOMapper;
+import com.example.springwebserver.dao.BookDOMapper;
 import com.example.springwebserver.dao.TagDOMapper;
 import com.example.springwebserver.dataObject.AuthorDO;
 import com.example.springwebserver.dataObject.TagDO;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Controller("rankList")
 @RequestMapping("/rankList")
@@ -50,6 +52,9 @@ public class RankListController {
 
     @Autowired
     private AuthorDOMapper authorDOMapper;
+
+    @Autowired
+    private BookDOMapper bookDOMapper;
 
 
     @ApiOperation("获取热书榜")
@@ -75,10 +80,9 @@ public class RankListController {
         List<TagShowVO> ret = new ArrayList<TagShowVO>();
         for(TagDO one : tags){
             TagShowVO temp;
-//            if(redisService.hasKey("Tag:" + one.getTagId()) && redisService.getExpire("Tag:" + one.getTagId()) >= 0){// && redisService.getExpire("Tga:" + one.getTagId()) >= 0
-//                redisService.expire("Tag:" + one.getTagId(),3600);
+//            System.out.println("Rest time :" + redisService.getExpire("Tag:" + one.getTagId()));
+//            if(redisService.hasKey("Tag:" + one.getTagId()) &&  redisService.getExpire("Tag:" + one.getTagId()) > 0){// && redisService.getExpire("Tga:" + one.getTagId()) >= 0
 //                System.out.println("Tag cache works:" + one.getTagId());
-//                System.out.println(redisService.get("Tag:" + one.getTagId()));
 //                temp = (TagShowVO) redisService.get("Tag:" + one.getTagId());
 //            }else{
                 temp = new TagShowVO();
@@ -86,7 +90,7 @@ public class RankListController {
                 List<BookModel> books = bookService.listBookByHotTag(one.getTagId().longValue());
                 System.out.println(books.get(0).getBookName());
                 temp.setHotBooks(books);
-//                redisService.lSet("Tag:" + one.getTagId(),temp,36000);
+                redisTemplate.opsForValue().set("Tag:" +  one.getTagId(),temp,60, TimeUnit.MINUTES);
 //            }
             ret.add(temp);
         }
@@ -113,8 +117,8 @@ public class RankListController {
 //            }else{
             temp = new AuthorShowVO();
             BeanUtils.copyProperties(one,temp);
-            List<BookModel> books = bookService.listBookByHotAuthor(one.getAuthorId().longValue());
-            System.out.println(books.get(0).getBookName());
+            List<BookModel> books = bookService.listBookByHotAuthor(one.getAuthorId());
+            System.out.println(one.getAuthorId() + " SIZE:" + books.size());
             temp.setHotBooks(books);
 //                redisService.lSet("Tag:" + one.getTagId(),temp,36000);
 //            }
@@ -129,14 +133,14 @@ public class RankListController {
     @GetMapping("/hotChineseBook")
     @ResponseBody
     public CommonReturnType getHotChineseBook(){
-        return null;
+        return CommonReturnType.create(bookDOMapper.listBookByChina());
     }
 
-    @ApiOperation("获取8本最热国内作品")
+    @ApiOperation("获取8本最热国外作品")
     @GetMapping("/hotBoardBook")
     @ResponseBody
     public CommonReturnType getHotBoardBook(){
-        return null;
+        return CommonReturnType.create(bookDOMapper.listBookByBoard());
     }
 
 }
