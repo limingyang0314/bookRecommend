@@ -82,4 +82,8 @@ public interface BookDOMapper {
 
     List<BookDO> listBookByHotAuthor(Long authorID);
 
+    List<BookDO> listBookByChina();
+
+    List<BookDO> listBookByBoard();
+
 }

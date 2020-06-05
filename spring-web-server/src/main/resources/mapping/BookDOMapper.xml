@@ -439,4 +439,20 @@
     from books
     where tag_ids LIKE '%,${tagId}' OR tag_ids LIKE '${tagId},%' OR tag_ids LIKE '%,${tagId},%' OR tag_ids = #{tagId} ORDER BY rating * rating_person_num DESC LIMIT 8
   </select>
+
+  <!--获取最热门的八本国内图书-->
+  <select id="listBookByChina" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from books
+    where country_id IN (2,4,5,6,7,11,12,13,14) ORDER BY rating * rating_person_num LIMIT 8
+  </select>
+
+  <!--获取最热门的八本国外图书-->
+  <select id="listBookByBoard" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    from books
+    where country_id NOT IN (2,4,5,6,7,11,12,13,14) ORDER BY rating * rating_person_num LIMIT 8
+  </select>
 </mapper>

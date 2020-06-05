@@ -1,6 +1,7 @@
 package com.example.springwebserver.controller;
 
 
+import com.example.springwebserver.controller.viewObject.AuthorShowVO;
 import com.example.springwebserver.controller.viewObject.TagShowVO;
 import com.example.springwebserver.dao.AuthorDOMapper;
 import com.example.springwebserver.dao.TagDOMapper;
@@ -96,23 +97,23 @@ public class RankListController {
     @ApiOperation("获取热门作者及其热书,每个作者最多返回8本")
     @GetMapping("/hotAuthorAndBook")
     @ResponseBody
-    public CommonReturnType getHotTagAndBook(@RequestParam(name = "page") int page,
+    public CommonReturnType getHotAuthorAndBook(@RequestParam(name = "page") int page,
                                              @RequestParam(name = "size") int size) throws BusinessException {
         PageHelper.startPage(page, size);
         Page<AuthorDO> data = authorDOMapper.listAuthorByHotVal();
         List<AuthorDO> authors = data.getResult();
-        List<TagShowVO> ret = new ArrayList<TagShowVO>();
-        for(TagDO one : tags){
-            TagShowVO temp;
+        List<AuthorShowVO> ret = new ArrayList<AuthorShowVO>();
+        for(AuthorDO one : authors){
+            AuthorShowVO temp;
 //            if(redisService.hasKey("Tag:" + one.getTagId()) && redisService.getExpire("Tag:" + one.getTagId()) >= 0){// && redisService.getExpire("Tga:" + one.getTagId()) >= 0
 //                redisService.expire("Tag:" + one.getTagId(),3600);
 //                System.out.println("Tag cache works:" + one.getTagId());
 //                System.out.println(redisService.get("Tag:" + one.getTagId()));
 //                temp = (TagShowVO) redisService.get("Tag:" + one.getTagId());
 //            }else{
-            temp = new TagShowVO();
+            temp = new AuthorShowVO();
             BeanUtils.copyProperties(one,temp);
-            List<BookModel> books = bookService.listBookByHotTag(one.getTagId().longValue());
+            List<BookModel> books = bookService.listBookByHotAuthor(one.getAuthorId().longValue());
             System.out.println(books.get(0).getBookName());
             temp.setHotBooks(books);
 //                redisService.lSet("Tag:" + one.getTagId(),temp,36000);
@@ -124,6 +125,18 @@ public class RankListController {
     }
 
 
+    @ApiOperation("获取8本最热国内作品")
+    @GetMapping("/hotChineseBook")
+    @ResponseBody
+    public CommonReturnType getHotChineseBook(){
+        return null;
+    }
 
+    @ApiOperation("获取8本最热国内作品")
+    @GetMapping("/hotBoardBook")
+    @ResponseBody
+    public CommonReturnType getHotBoardBook(){
+        return null;
+    }
 
 }
