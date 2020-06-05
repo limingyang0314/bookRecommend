@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public interface BookService {
 
@@ -40,6 +41,10 @@ public interface BookService {
     boolean isHasRead(Long userId,Long bookId) throws BusinessException;
 
     BookModel convertModelFromDO(BookDO bookDO);
+
+    List<BookModel> listBookByHotTag(Long tagID);
+
+    List<BookModel> listBookByHotAuthor(Long authorID);
 
 }
 

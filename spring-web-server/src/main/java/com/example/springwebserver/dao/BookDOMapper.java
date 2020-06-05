@@ -78,4 +78,8 @@ public interface BookDOMapper {
 
     List<BookDO> selectByPrimaryKeys(List<Long> bookIds);
 
+    List<BookDO> listBookByHotTag(Long tagID);
+
+    List<BookDO> listBookByHotAuthor(Long authorID);
+
 }

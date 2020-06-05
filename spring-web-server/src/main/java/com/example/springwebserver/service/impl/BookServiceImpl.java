@@ -140,6 +140,17 @@ public class BookServiceImpl implements BookService {
         return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
     }
 
+
+    public List<BookModel> listBookByHotTag(Long tagID){
+        List<BookDO> bookList = bookDOMapper.listBookByHotTag(tagID);
+        return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
+    }
+
+    public List<BookModel> listBookByHotAuthor(Long authorID){
+        List<BookDO> bookList = bookDOMapper.listBookByHotTag(authorID);
+        return bookList.stream().map(this::convertModelFromDO).collect(Collectors.toList());
+    }
+
     @Override
     public HashMap<String,String> ratingBook(Long bookId, double ratingNum) throws BusinessException {
         UserModel user = userService.getUserByToken();

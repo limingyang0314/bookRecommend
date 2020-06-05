@@ -1,6 +1,7 @@
 package com.example.springwebserver.dao;
 
 import com.example.springwebserver.dataObject.AuthorDO;
+import com.github.pagehelper.Page;
 
 public interface AuthorDOMapper {
     /**
@@ -50,4 +51,6 @@ public interface AuthorDOMapper {
      * @mbg.generated Thu May 21 21:11:28 CST 2020
      */
     int updateByPrimaryKey(AuthorDO record);
+
+    Page<AuthorDO> listAuthorByHotVal();
 }

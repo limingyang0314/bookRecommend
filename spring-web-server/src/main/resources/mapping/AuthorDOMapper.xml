@@ -10,6 +10,7 @@
     <id column="author_id" jdbcType="BIGINT" property="authorId" />
     <result column="author_name" jdbcType="VARCHAR" property="authorName" />
     <result column="country_id" jdbcType="INTEGER" property="countryId" />
+    <result column="author_hot" jdbcType="BIGINT" property="author_hot" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--
@@ -108,4 +109,11 @@
       country_id = #{countryId,jdbcType=INTEGER}
     where author_id = #{authorId,jdbcType=BIGINT}
   </update>
+
+  <!--根据热度获取作者-->
+  <select id="listAuthorByHotVal" resultMap="BaseResultMap"><!--resultType="com.example.springwebserver.dataObject.TagDO"-->
+    select
+    <include refid="Base_Column_List" />
+    from authors ORDER BY author_hot DESC
+  </select>
 </mapper>
