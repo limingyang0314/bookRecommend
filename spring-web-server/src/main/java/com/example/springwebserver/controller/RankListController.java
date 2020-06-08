@@ -7,6 +7,7 @@ import com.example.springwebserver.dao.AuthorDOMapper;
 import com.example.springwebserver.dao.BookDOMapper;
 import com.example.springwebserver.dao.TagDOMapper;
 import com.example.springwebserver.dataObject.AuthorDO;
+import com.example.springwebserver.dataObject.BookDO;
 import com.example.springwebserver.dataObject.TagDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
@@ -32,6 +33,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Controller("rankList")
 @RequestMapping("/rankList")
@@ -133,14 +135,15 @@ public class RankListController {
     @GetMapping("/hotChineseBook")
     @ResponseBody
     public CommonReturnType getHotChineseBook(){
-        return CommonReturnType.create(bookDOMapper.listBookByChina());
+        List<BookDO> books = bookDOMapper.listBookByChina();
+        return CommonReturnType.create(books.stream().map(bookService::convertModelFromDO).collect(Collectors.toList()));
     }
 
     @ApiOperation("获取8本最热国外作品")
     @GetMapping("/hotBoardBook")
     @ResponseBody
     public CommonReturnType getHotBoardBook(){
-        return CommonReturnType.create(bookDOMapper.listBookByBoard());
+        return CommonReturnType.create(bookDOMapper.listBookByBoard().stream().map(bookService::convertModelFromDO).collect(Collectors.toList()));
     }
 
 }
