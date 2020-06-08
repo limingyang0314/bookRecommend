@@ -58,9 +58,9 @@ public class RecommendController {
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "bookID") Long bookID) throws BusinessException {
         List<BookModel> data = recommendService.listBookRecommendByBookID(bookID,page,size);
-        if(data.size() == 0){
-            throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
-        }
+//        if(data.size() == 0){
+//            throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
+//        }
         return CommonReturnType.create(data);
     }
 
@@ -79,9 +79,9 @@ public class RecommendController {
                                                  @RequestParam(name = "size") int size,
                                                  @RequestParam(name = "userID") Long userID) throws BusinessException {
         List<BookModel> data = recommendService.listBookRecommendByUserID(userID,page,size);
-        if(data.size() == 0){
-            throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
-        }
+//        if(data.size() == 0){
+//            throw new BusinessException(EmBusinessError.BOOK_NOT_EXIST);
+//        }
         return CommonReturnType.create(data);
     }
 
