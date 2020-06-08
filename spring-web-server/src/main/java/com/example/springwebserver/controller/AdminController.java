@@ -1,10 +1,10 @@
 package com.example.springwebserver.controller;
 
-import com.example.springwebserver.dao.AdminDOMapper;
-import com.example.springwebserver.dao.BookDOMapper;
-import com.example.springwebserver.dao.ReviewDOMapper;
+import com.example.springwebserver.dao.*;
 import com.example.springwebserver.dataObject.BookDO;
+import com.example.springwebserver.dataObject.RatingDO;
 import com.example.springwebserver.dataObject.ReviewDO;
+import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.Random;
 
 @Controller("admin")
 @RequestMapping("/admin")
@@ -31,6 +32,9 @@ public class AdminController {
     private UserService userService;
 
     @Autowired
+    private UserDOMapper userDOMapper;
+
+    @Autowired
     private AdminDOMapper adminDOMapper;
 
     @Autowired
@@ -38,6 +42,9 @@ public class AdminController {
 
     @Autowired
     private ReviewDOMapper reviewDOMapper;
+
+    @Autowired
+    private RatingDOMapper ratingDOMapper;
 
     /**
      * 未登录或者非管理员将无法使用管理接口
@@ -82,6 +89,32 @@ public class AdminController {
         reviewDOMapper.softDeleteByPrimaryKey(reviewId);
 
         ret.put("message","Delete success.");
+        return CommonReturnType.create(ret);
+    }
+
+    @ApiOperation("为某本书随机生成若干评分")
+    @GetMapping("/randomRating")
+    @ResponseBody
+    public CommonReturnType randomRating(@RequestParam(name = "bookID") long bookId,
+                                         @RequestParam(name = "minRating") int min,
+                                         @RequestParam(name = "maxRating") int max,
+                                         @RequestParam(name = "size") int size) throws BusinessException {
+        HashMap<String,String> ret = new HashMap<>();
+        if(!judgeAdmin()){
+            throw new BusinessException(EmBusinessError.NOT_ADMIN_USER);
+        }
+        for(int i = 0 ; i < size ; ++ i){
+            Random random = new Random();
+            Integer temp_rating = min + (int)random.nextInt(max - min + 1);
+            //找一个没有评论这本书的用户
+            UserDO user = userDOMapper.selectOneUserNotRatingTheBook(bookId);
+            RatingDO rating = new RatingDO();
+            rating.setRating(temp_rating.doubleValue());
+            rating.setBookId(bookId);
+            rating.setUserId(user.getUserId());
+            ratingDOMapper.insertSelective(rating);
+        }
+        ret.put("message","Insert success.");
         return CommonReturnType.create(ret);
     }
 

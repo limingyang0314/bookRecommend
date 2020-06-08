@@ -53,4 +53,6 @@ public interface UserDOMapper {
 
 
     UserDO selectByUserName(String userName);
+
+    UserDO selectOneUserNotRatingTheBook(Long bookId);
 }

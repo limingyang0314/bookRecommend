@@ -143,4 +143,8 @@
     where user_name = #{userName, jdbcType=VARCHAR}
   </select>
 
+  <select id="selectOneUserNotRatingTheBook" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    SELECT * FROM users U WHERE U.user_id NOT IN (SELECT R.user_id FROM ratings R WHERE R.book_id = #{bookId,jdbcType=BIGINT}) LIMIT 1
+  </select>
+
 </mapper>

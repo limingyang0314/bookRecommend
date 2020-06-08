@@ -37,7 +37,8 @@ public enum EmBusinessError implements CommonError {
     REVIEW_NOT_EXIST(401,"review not exist or you are not author"),
 
     //50 start with, about admins
-    NOT_ADMIN_USER(401,"you are not admin");
+    NOT_ADMIN_USER(401,"you are not admin"),
+    RATING_RANGE_WRONG(402, "rating can not less than 0 or more than 10");
 
 
 
