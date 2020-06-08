@@ -1,14 +1,89 @@
 package com.example.springwebserver.controller;
 
+import com.example.springwebserver.dao.AdminDOMapper;
+import com.example.springwebserver.dao.BookDOMapper;
+import com.example.springwebserver.dao.ReviewDOMapper;
+import com.example.springwebserver.dataObject.BookDO;
+import com.example.springwebserver.dataObject.ReviewDO;
+import com.example.springwebserver.enums.EmBusinessError;
+import com.example.springwebserver.exception.BusinessException;
+import com.example.springwebserver.response.CommonReturnType;
+import com.example.springwebserver.service.UserService;
+import com.example.springwebserver.service.model.UserModel;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
 
 @Controller("admin")
 @RequestMapping("/admin")
 @Slf4j
 @Api(tags = "管理后台接口", value = "提供基础后台管理的 Rest API")
 public class AdminController {
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AdminDOMapper adminDOMapper;
+
+    @Autowired
+    private BookDOMapper bookDOMapper;
+
+    @Autowired
+    private ReviewDOMapper reviewDOMapper;
+
+    /**
+     * 未登录或者非管理员将无法使用管理接口
+     * @return
+     * @throws BusinessException
+     */
+    private boolean judgeAdmin() throws BusinessException {
+        if(!userService.isLoginUser()){
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN);
+            //return false;
+        }
+        UserModel user = userService.getUserByToken();
+        if(adminDOMapper.selectByPrimaryKey(user.getUserId()) == null){
+
+            return false;
+        }
+        return true;
+    }
+
+    @ApiOperation("删除书籍(软删除)")
+    @GetMapping("/deleteBook")
+    @ResponseBody
+    public CommonReturnType deleteBook(@RequestParam(name = "bookID") long bookId) throws BusinessException {
+        HashMap<String,String> ret = new HashMap<>();
+        if(!judgeAdmin()){
+            throw new BusinessException(EmBusinessError.NOT_ADMIN_USER);
+        }
+        bookDOMapper.softDeleteByPrimaryKey(bookId);
+
+        ret.put("message","Delete success.");
+        return CommonReturnType.create(ret);
+    }
+
+    @ApiOperation("删除评论(软删除)")
+    @GetMapping("/deleteReview")
+    @ResponseBody
+    public CommonReturnType deleteReview(@RequestParam(name = "reviewID") long reviewId) throws BusinessException {
+        HashMap<String,String> ret = new HashMap<>();
+        if(!judgeAdmin()){
+            throw new BusinessException(EmBusinessError.NOT_ADMIN_USER);
+        }
+        reviewDOMapper.softDeleteByPrimaryKey(reviewId);
+
+        ret.put("message","Delete success.");
+        return CommonReturnType.create(ret);
+    }
+
 
 }
