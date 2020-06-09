@@ -16,13 +16,15 @@ spring:
     default-property-inclusion: non_null
 
   redis:
-    host: localhost
+    host: 111.67.206.170
     port: 6379
     database: 10
     jedis:
       pool:
         max-active: 50
         min-idle: 20
+    timeout: 5000
+
 
 server:
   port: 8090
@@ -44,3 +46,5 @@ pagehelper:
 logging:
   level:
     com.example.springwebserver.dao: debug
+
+
