@@ -6,7 +6,7 @@
 
     <context id="DB2Tables"    targetRuntime="MyBatis3">
         <!--数据库链接地址账号密码-->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://rm-bp14h269ydw6qq5h50o.mysql.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=Asia/Shanghai&amp;nullCatalogMeansCurrent=true" userId="book_recommend" password="dawangba1A">
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://bookrecommend.rwlb.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&amp;characterEncoding=utf-8&amp;serverTimezone=Asia/Shanghai&amp;nullCatalogMeansCurrent=true" userId="book_recommend" password="dawangba1!A">
         </jdbcConnection>
         <!--生成DataObject类存放位置-->
         <javaModelGenerator targetPackage="com.example.springwebserver.dataObject" targetProject="src/main/java">
