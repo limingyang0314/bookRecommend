@@ -165,12 +165,5 @@ public class UserController extends GlobalExceptionHandler {
         return CommonReturnType.create(ret);
     }
 
-//    public CommonReturnType isWantRead(@RequestParam(name = "bookID") long bookID) throws BusinessException{
-//
-//    }
-//
-//    public CommonReturnType isHasRead(@RequestParam(name = "bookID") long bookID) throws BusinessException{
-//
-//    }
 
 }
