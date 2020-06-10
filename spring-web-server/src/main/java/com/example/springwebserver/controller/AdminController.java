@@ -190,4 +190,23 @@ public class AdminController {
         }
         return CommonReturnType.create(pageResult);
     }
+
+    @ApiOperation("获取订单总数")
+    @GetMapping("/order/count")
+    @ResponseBody
+    public CommonReturnType orderCount() throws BusinessException {
+        Map<String, Object> ret = new HashMap<>();
+        if(!judgeAdmin()){
+            throw new BusinessException(EmBusinessError.NOT_ADMIN_USER);
+        }
+
+        int count = mallOrderService.getOrderCount();
+        if(count==0){
+            log.warn("==== [get order] ==== order not exit");
+            throw new BusinessException(EmBusinessError.MYORDER_NOT_EXIST);
+        }
+        ret.put("message",count+"");
+        return CommonReturnType.create(ret);
+    }
+
 }

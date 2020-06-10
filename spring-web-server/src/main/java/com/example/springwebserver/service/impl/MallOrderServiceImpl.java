@@ -17,6 +17,7 @@ import com.example.springwebserver.dao.MallOrderMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import com.example.springwebserver.enums.*;
+import org.springframework.util.StringUtils;
 
 import java.awt.print.Book;
 import java.text.SimpleDateFormat;
@@ -144,6 +145,16 @@ public class MallOrderServiceImpl implements MallOrderService {
     @Override
     public MallOrderDO getMallOrderDOByOrderNo(String orderNo) {
         return null;
+    }
+
+    @Override
+    public int getOrderCount() {
+        Map<String, Object> params = new HashMap<>();
+        if (StringUtils.isEmpty(params.get("page"))) {
+            params.put("page", 1);
+        }
+        params.put("limit", 20);
+        return mallOrderMapper.getTotalMallOrders(new PageQueryUtil(params));
     }
 
     @Override

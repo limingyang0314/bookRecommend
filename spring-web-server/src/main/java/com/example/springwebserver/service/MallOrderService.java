@@ -123,5 +123,7 @@ public interface MallOrderService {
 
     List<MallOrderItemVO> getOrderItems(Long id);
 
+    int getOrderCount();
+
 }
 
