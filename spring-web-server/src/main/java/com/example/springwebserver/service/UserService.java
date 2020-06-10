@@ -1,5 +1,6 @@
 package com.example.springwebserver.service;
 
+import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.service.model.UserModel;
 
@@ -23,4 +24,6 @@ public interface UserService {
     HashMap<String,String> setHasRead(Long bookId) throws BusinessException;
 
     boolean isLoginUser() throws BusinessException;
+
+    UserDO updateAddress(Long userId, String address, String number, String recipient) throws BusinessException;
 }

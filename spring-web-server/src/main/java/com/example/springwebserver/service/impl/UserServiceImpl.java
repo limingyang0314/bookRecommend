@@ -41,6 +41,19 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ValidatorImpl validator;
 
+    @Override
+    public UserDO updateAddress(Long userId, String address, String number, String recipient) throws BusinessException {
+        UserDO userDOupdate = userDOMapper.selectByPrimaryKey(userId);
+        userDOupdate.setAddress(address);
+        userDOupdate.setNumber(number);
+        userDOupdate.setRecipient(recipient);
+        if(userDOMapper.updateByPrimaryKeySelective(userDOupdate)>0){
+            return userDOupdate;
+        }
+        else
+            throw new BusinessException(EmBusinessError.DB_ERROR);
+    }
+
     @Autowired
     private RedisTemplate redisTemplate;
 

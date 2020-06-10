@@ -3,6 +3,7 @@ package com.example.springwebserver.controller;
 import com.example.springwebserver.controller.viewObject.UserVO;
 import com.example.springwebserver.dao.UserHasReadDOMapper;
 import com.example.springwebserver.dao.UserWantReadDOMapper;
+import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.dataObject.UserHasReadDO;
 import com.example.springwebserver.dataObject.UserWantReadDO;
 import com.example.springwebserver.enums.EmBusinessError;
@@ -165,5 +166,13 @@ public class UserController extends GlobalExceptionHandler {
         return CommonReturnType.create(ret);
     }
 
+    @ApiOperation("用户更新接口")
+    @PostMapping(value = "/update")
+    @ResponseBody
+    public CommonReturnType updateUser(@RequestParam(name = "address") String address,@RequestParam(name = "number") String number,@RequestParam(name = "recipient") String recipient) throws BusinessException {
+        UserModel user = userService.getUserByToken();
+        UserDO userDO = userService.updateAddress(user.getUserId(),address,number,recipient);
+        return CommonReturnType.create(userDO);
+    }
 
 }
