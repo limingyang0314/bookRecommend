@@ -337,7 +337,7 @@
     -->
     select
     <include refid="Base_Column_List" />
-    from books
+    from books where deleted_at IS NULL
   </select>
 
   <select id="listBookByAuthorPage" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
@@ -349,7 +349,7 @@
     select
     <include refid="Base_Column_List" />
     from books
-    where author_id LIKE '%,${authorId}' OR author_id LIKE '${authorId},%' OR author_id LIKE '%,${authorId},%' OR author_id = #{authorId}
+    where (author_id LIKE '%,${authorId}' OR author_id LIKE '${authorId},%' OR author_id LIKE '%,${authorId},%' OR author_id = #{authorId}) AND deleted_at IS NULL
   </select>
 
   <select id="listBookByTagPage" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
@@ -361,7 +361,7 @@
     select
     <include refid="Base_Column_List" />
     from books
-    where tag_ids LIKE '%,${tagId}' OR tag_ids LIKE '${tagId},%' OR tag_ids LIKE '%,${tagId},%' OR tag_ids = #{tagId}
+    where (tag_ids LIKE '%,${tagId}' OR tag_ids LIKE '${tagId},%' OR tag_ids LIKE '%,${tagId},%' OR tag_ids = #{tagId}) AND deleted_at IS NULL
   </select>
   <!--给出一个集合的bookID字符串，返回其所有图书-->
   <select id="listBookByBookIDSetPage" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
@@ -413,7 +413,7 @@
     -->
     select
         B.*
-    from books B, authors A WHERE (B.book_name LIKE '${key}' OR A.author_name LIKE '${key}' OR B.isbn = '${key}') AND B.author_ID = A.author_ID
+    from books B, authors A WHERE (B.book_name LIKE '${key}' OR A.author_name LIKE '${key}' OR B.isbn = '${key}') AND B.deleted_at IS NULL AND B.author_ID = A.author_ID
   </select>
 
   <!--获取某个作者的八个热书-->
@@ -425,7 +425,7 @@
     -->
     select
     <include refid="Base_Column_List" />
-    from books WHERE author_id = #{authorID} ORDER BY rating * rating_person_num DESC LIMIT 8
+    from books WHERE author_id = #{authorID} ORDER BY rating * rating_person_num AND deleted_at IS NULL DESC LIMIT 8
   </select>
 
   <!--获取某个tag的八个热书-->
@@ -438,7 +438,7 @@
     select
     <include refid="Base_Column_List" />
     from books
-    where tag_ids LIKE '%,${tagId}' OR tag_ids LIKE '${tagId},%' OR tag_ids LIKE '%,${tagId},%' OR tag_ids = #{tagId} ORDER BY rating * rating_person_num DESC LIMIT 8
+    where (tag_ids LIKE '%,${tagId}' OR tag_ids LIKE '${tagId},%' OR tag_ids LIKE '%,${tagId},%' OR tag_ids = #{tagId}) AND deleted_at IS NULL ORDER BY rating * rating_person_num DESC LIMIT 8
   </select>
 
   <!--获取最热门的八本国内图书-->
@@ -446,7 +446,7 @@
     select
     <include refid="Base_Column_List" />
     from books
-    where country_id IN (2,4,5,6,7,11,12,13,14,18,19,37) ORDER BY rating * rating_person_num DESC LIMIT 8
+    where country_id IN (2,4,5,6,7,11,12,13,14,18,19,37) AND deleted_at IS NULL ORDER BY rating * rating_person_num DESC LIMIT 8
   </select>
 
   <!--获取最热门的八本国外图书-->
@@ -454,7 +454,7 @@
     select
     <include refid="Base_Column_List" />
     from books
-    where country_id NOT IN (1,2,4,5,6,7,11,12,13,14,17,18,19,37) ORDER BY rating * rating_person_num DESC LIMIT 8
+    where country_id NOT IN (1,2,4,5,6,7,11,12,13,14,17,18,19,37) AND deleted_at IS NULL ORDER BY rating * rating_person_num DESC LIMIT 8
   </select>
 
   <update id="softDeleteByPrimaryKey" parameterType="java.lang.Long">

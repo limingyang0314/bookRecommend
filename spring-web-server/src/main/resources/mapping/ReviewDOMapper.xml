@@ -178,7 +178,7 @@
     -->
     select
     R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id
-    from reviews R,books B WHERE B.book_ID = R.book_ID AND R.user_id = #{user_id}
+    from reviews R,books B WHERE B.book_ID = R.book_ID AND R.user_id = #{user_id} AND R.deleted_at IS NULL
   </select>
   <select id="listReviewByBookID" parameterType="java.lang.Long" resultMap="BaseResultMap">
     <!--
@@ -188,7 +188,7 @@
     -->
     select
     R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id
-    from reviews R,books B WHERE B.book_ID = R.book_ID AND R.book_ID = #{bookId}
+    from reviews R,books B WHERE B.book_ID = R.book_ID AND R.book_ID = #{bookId} AND R.deleted_at IS NULL
 <!--    select-->
 <!--    <include refid="Base_Column_List" />-->
 <!--    from reviews-->
@@ -203,7 +203,7 @@
     -->
     select
     R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id,U.user_name
-    from reviews R,books B,users U WHERE B.book_ID = R.book_ID AND U.user_id = R.user_id AND R.book_ID = #{bookId} ORDER BY R.agree_number DESC
+    from reviews R,books B,users U WHERE B.book_ID = R.book_ID AND U.user_id = R.user_id AND R.book_ID = #{bookId} AND R.deleted_at IS NULL ORDER BY R.agree_number DESC
     <!--    select-->
     <!--    <include refid="Base_Column_List" />-->
     <!--    from reviews-->
@@ -218,7 +218,7 @@
     -->
     select
     R.review_id,B.book_name,B.cover_url,R.content,R.review_time,R.agree_number,R.star,R.buy_time,R.book_id,R.user_id,U.user_name
-    from reviews R,books B,users U WHERE B.book_ID = R.book_ID AND U.user_id = R.user_id AND R.book_ID = #{bookId} ORDER BY R.review_time DESC
+    from reviews R,books B,users U WHERE B.book_ID = R.book_ID AND U.user_id = R.user_id AND R.book_ID = #{bookId} AND R.delete_at IS NULL ORDER BY R.review_time DESC
     <!--    select-->
     <!--    <include refid="Base_Column_List" />-->
     <!--    from reviews-->
@@ -226,7 +226,7 @@
   </select>
 
   <update id="softDeleteByPrimaryKey" parameterType="java.lang.Long">
-    update reviews set deleted_time = CURRENT_TIMESTAMP where review_id = #{reviewId,jdbcType=BIGINT}
+    update reviews set deleted_at = CURRENT_TIMESTAMP where review_id = #{reviewId,jdbcType=BIGINT}
   </update>
 
 </mapper>
