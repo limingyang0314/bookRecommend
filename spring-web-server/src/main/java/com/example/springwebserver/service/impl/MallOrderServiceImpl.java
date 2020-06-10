@@ -147,6 +147,52 @@ public class MallOrderServiceImpl implements MallOrderService {
     }
 
     @Override
+    public PageResult getAllOrders(PageQueryUtil pageUtil) throws BusinessException {
+        int total = mallOrderMapper.getTotalMallOrders(pageUtil);
+        List<MallOrderDO> orderDOS = mallOrderMapper.findMallOrderList(pageUtil);
+        if(total==0)
+            throw new BusinessException(EmBusinessError.ORDER_NOT_EXIST);
+        //可能有多个订单
+        List<MallOrderDetailVO> detailVOS = new ArrayList<>();
+        detailVOS = BeanUtil.copyList(orderDOS,MallOrderDetailVO.class);
+
+        List<Long> orderIds = orderDOS.stream().map(MallOrderDO::getOrderId).collect(Collectors.toList());
+        if(!orderDOS.isEmpty()){
+            List<MallOrderItemDO> itemDOS = mallOrderItemMapper.selectByOrderIds(orderIds);
+            List<Long> bookIds = itemDOS.stream().map(MallOrderItemDO::getGoodsId).collect(Collectors.toList());
+            List<BookDO> bookDOS = bookDOMapper.selectByPrimaryKeys(bookIds);
+            System.out.println(bookDOS.get(0).toString());
+            System.out.println(itemDOS.get(1).toString());
+
+            Map<Long,MallOrderItemDO> itemByBookIdMap = itemDOS.stream().collect(Collectors.toMap(MallOrderItemDO::getGoodsId,mallOrderItemDO->mallOrderItemDO,(e1,e2)->e1));
+            Map<Long,BookDO> bookByBookIdMap = bookDOS.stream().collect(Collectors.toMap(BookDO::getBookId,bookDO -> bookDO,(e1,e2)->e1));
+
+            for(Long book_id:bookByBookIdMap.keySet()){
+                if(itemByBookIdMap.containsKey(book_id)){
+                    MallOrderItemDO mallOrderItemDO = itemByBookIdMap.get(book_id);
+                    BookDO bookDO = bookByBookIdMap.get(book_id);
+                    String url = bookDO.getCoverUrl();
+                    mallOrderItemDO.setGoodsCoverImg(url);
+                    itemByBookIdMap.put(book_id,mallOrderItemDO);
+                }
+            }
+            itemDOS = new ArrayList<>(itemByBookIdMap.values());
+            Map<Long,List<MallOrderItemDO>> itemByOrderIdMap = itemDOS.stream().collect(groupingBy(MallOrderItemDO::getOrderId));
+
+            for(MallOrderDetailVO mallOrderDetailVO:detailVOS){
+                if(itemByOrderIdMap.containsKey(mallOrderDetailVO.getOrderId())){
+                    List<MallOrderItemDO> mallOrderItemDOS = itemByOrderIdMap.get(mallOrderDetailVO.getOrderId());
+                    List<MallOrderItemVO> mallOrderItemVOS = BeanUtil.copyList(mallOrderItemDOS,MallOrderItemVO.class);
+                    System.out.println(mallOrderDetailVO);
+                    mallOrderDetailVO.setMallOrderItemVOS(mallOrderItemVOS);
+                }
+            }
+        }
+        PageResult pageResult = new PageResult(detailVOS, total, pageUtil.getLimit(), pageUtil.getPage());
+        return pageResult;
+    }
+
+    @Override
     public PageResult getMyOrders(PageQueryUtil pageUtil) throws BusinessException {
         int total = mallOrderMapper.getTotalMallOrders(pageUtil);
         List<MallOrderDO> orderDOS = mallOrderMapper.findMallOrderList(pageUtil);

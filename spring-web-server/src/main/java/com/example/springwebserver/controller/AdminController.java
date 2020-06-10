@@ -8,8 +8,11 @@ import com.example.springwebserver.dataObject.UserDO;
 import com.example.springwebserver.enums.EmBusinessError;
 import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
+import com.example.springwebserver.service.MallOrderService;
 import com.example.springwebserver.service.UserService;
 import com.example.springwebserver.service.model.UserModel;
+import com.example.springwebserver.util.PageQueryUtil;
+import com.example.springwebserver.util.PageResult;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
@@ -17,6 +20,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 @Controller("admin")
@@ -48,6 +53,8 @@ public class AdminController {
 
     @Autowired
     private RatingDOMapper ratingDOMapper;
+    @Autowired
+    private MallOrderService mallOrderService;
 
     /**
      * 未登录或者非管理员将无法使用管理接口
@@ -160,5 +167,27 @@ public class AdminController {
 
         ret.put("message","Delete success.");
         return CommonReturnType.create(ret);
+    }
+
+    @ApiOperation("分页获取订单列表")
+    @GetMapping("/order")
+    @ResponseBody
+    public CommonReturnType orderListPage() throws BusinessException {
+        Map<String, Object> params = new HashMap<>();
+        if(!judgeAdmin()){
+            throw new BusinessException(EmBusinessError.NOT_ADMIN_USER);
+        }
+        if (StringUtils.isEmpty(params.get("page"))) {
+            params.put("page", 1);
+        }
+        params.put("limit", 20);
+        //封装订单数据
+        PageQueryUtil pageUtil = new PageQueryUtil(params);
+        PageResult pageResult = mallOrderService.getMyOrders(pageUtil);
+        if(pageResult==null){
+            log.warn("==== [get order] ==== order not exit");
+            throw new BusinessException(EmBusinessError.MYORDER_NOT_EXIST);
+        }
+        return CommonReturnType.create(pageResult);
     }
 }
