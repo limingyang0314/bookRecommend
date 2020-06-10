@@ -10,6 +10,8 @@ import com.example.springwebserver.exception.BusinessException;
 import com.example.springwebserver.response.CommonReturnType;
 import com.example.springwebserver.service.UserService;
 import com.example.springwebserver.service.model.UserModel;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 @Controller("admin")
@@ -62,6 +65,22 @@ public class AdminController {
             return false;
         }
         return true;
+    }
+
+    @ApiOperation("判断是否为管理员")
+    @GetMapping("/isAdmin")
+    @ResponseBody
+    public CommonReturnType isAdmin() throws BusinessException {
+        HashMap<String,String> ret = new HashMap<>();
+        if(!userService.isLoginUser()){
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN);
+        }
+        UserModel user = userService.getUserByToken();
+        if(adminDOMapper.selectByPrimaryKey(user.getUserId()) == null){
+            throw new BusinessException(EmBusinessError.USER_NOT_LOGIN);
+        }
+        ret.put("message","Access right.");
+        return CommonReturnType.create(ret);
     }
 
     @ApiOperation("删除书籍(软删除)")
@@ -118,5 +137,28 @@ public class AdminController {
         return CommonReturnType.create(ret);
     }
 
+    @ApiOperation("用户分页列表")
+    @GetMapping("/userList")
+    @ResponseBody
+    public CommonReturnType userList(@RequestParam(name = "page") int page,
+                                         @RequestParam(name = "size") int size) throws BusinessException {
+        PageHelper.startPage(page, size);
+        Page<UserDO> users = userDOMapper.listUserByPage();
+        List<UserDO> userList = users.getResult();
+        return CommonReturnType.create(userList);
+    }
 
+    @ApiOperation("删除用户(软删除)")
+    @GetMapping("/deleteUser")
+    @ResponseBody
+    public CommonReturnType deleteUser(@RequestParam(name = "userID") long userId) throws BusinessException {
+        HashMap<String,String> ret = new HashMap<>();
+        if(!judgeAdmin()){
+            throw new BusinessException(EmBusinessError.NOT_ADMIN_USER);
+        }
+        userDOMapper.softDeleteByPrimaryKey(userId);
+
+        ret.put("message","Delete success.");
+        return CommonReturnType.create(ret);
+    }
 }
