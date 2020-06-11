@@ -1,6 +1,8 @@
 package com.example.springwebserver.dao;
 
 import com.example.springwebserver.dataObject.UserDO;
+import com.github.pagehelper.Page;
+import org.apache.catalina.User;
 
 public interface UserDOMapper {
     /**
@@ -53,4 +55,10 @@ public interface UserDOMapper {
 
 
     UserDO selectByUserName(String userName);
+
+    UserDO selectOneUserNotRatingTheBook(Long bookId);
+
+    Page<UserDO> listUserByPage();
+
+    int softDeleteByPrimaryKey(Long userId);
 }

@@ -16,6 +16,7 @@ import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +51,9 @@ public class RecommendServiceImpl implements RecommendService {
         BookRecommendDO bookRecommend = bookRecommendDOMapper.selectByPrimaryKey(bookID);
         //获取推荐的id集合
         String recommends = bookRecommend.getBooks();
+        if(recommends == null || recommends == ""){
+            return new ArrayList<BookModel>();
+        }
         System.out.println(recommends);
         List<String> books = Arrays.asList(recommends.split(","));
         PageHelper.startPage(page, size);
@@ -71,6 +75,9 @@ public class RecommendServiceImpl implements RecommendService {
         UserRecommendDO userRecommend = userRecommendDOMapper.selectByPrimaryKey(userID);
         //获取推荐的id集合
         String recommends = userRecommend.getBooks();
+        if(recommends == null || recommends == ""){
+            return new ArrayList<BookModel>();
+        }
         System.out.println(recommends);
         List<String> books = Arrays.asList(recommends.split(","));
         PageHelper.startPage(page, size);

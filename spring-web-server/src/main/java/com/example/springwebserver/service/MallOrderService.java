@@ -94,6 +94,14 @@ public interface MallOrderService {
     PageResult getMyOrders(PageQueryUtil pageUtil) throws BusinessException;
 
     /**
+     * 所有订单列表
+     *
+     * @param pageUtil
+     * @return
+     */
+    PageResult getAllOrders(PageQueryUtil pageUtil) throws BusinessException;
+
+    /**
      * 手动取消订单
      *
      * @param orderNo
@@ -114,6 +122,8 @@ public interface MallOrderService {
     String paySuccess(String orderNo, int payType);
 
     List<MallOrderItemVO> getOrderItems(Long id);
+
+    int getOrderCount();
 
 }
 

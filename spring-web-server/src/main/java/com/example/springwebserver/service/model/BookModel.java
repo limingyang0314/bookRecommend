@@ -1,6 +1,7 @@
 package com.example.springwebserver.service.model;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.joda.time.DateTime;
 
@@ -48,10 +49,12 @@ public class BookModel implements Serializable {
 
     @NotNull(message = "tagIds can't be blank")
     @Size(min = 1, message = "a boos has at least one tag")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> tagIds;
 
     @NotNull(message = "tags can't be blank")
     @Size(min = 1, message = "a boos has at least one tag")
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<String> tags;
 
     @NotNull(message = "page can't be blank")
@@ -61,6 +64,7 @@ public class BookModel implements Serializable {
     @NotNull(message = "price can't be blank")
     private BigDecimal price;
 
+    @JsonFormat(with = JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
     private List<Seller> sellerlist;
 
     @NotBlank(message = "coverUrl can't be blank")

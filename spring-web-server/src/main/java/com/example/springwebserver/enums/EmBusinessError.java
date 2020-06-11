@@ -34,7 +34,11 @@ public enum EmBusinessError implements CommonError {
     SHOPPING_ITEM_NOT_EXIST(313,"shopping item is not in your cart"),
 
     // 40 start with, about reviews and ratings
-    REVIEW_NOT_EXIST(401,"review not exist or you are not author");
+    REVIEW_NOT_EXIST(401,"review not exist or you are not author"),
+
+    //50 start with, about admins
+    NOT_ADMIN_USER(401,"you are not admin"),
+    RATING_RANGE_WRONG(402, "rating can not less than 0 or more than 10");
 
 
 

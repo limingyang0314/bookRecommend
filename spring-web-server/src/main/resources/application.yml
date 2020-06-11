@@ -5,7 +5,7 @@ spring:
     name: bookRecommend
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: book_recommend
-    url: jdbc:mysql://rm-bp14h269ydw6qq5h50o.mysql.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://bookrecommend.rwlb.rds.aliyuncs.com:3306/book_recommend?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     type: com.alibaba.druid.pool.DruidDataSource
 
   mvc:
@@ -16,13 +16,15 @@ spring:
     default-property-inclusion: non_null
 
   redis:
-    host: localhost
+    host: 127.0.0.1
     port: 6379
     database: 10
     jedis:
       pool:
         max-active: 50
         min-idle: 20
+    timeout: 5000
+
 
 server:
   port: 8090
@@ -44,3 +46,5 @@ pagehelper:
 logging:
   level:
     com.example.springwebserver.dao: debug
+
+
