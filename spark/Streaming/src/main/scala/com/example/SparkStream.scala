@@ -42,7 +42,7 @@ object SparkStream {
       ConsumerStrategies.Subscribe[String, String](Array(topics), kafkaParam)
     )
 
-    val modelUtil = ModelUtil(spark)
+    val modelUtil = ModelUtil(spark, sc)
 
     kafkaStream.map(record => (record.key, record.value))
         .foreachRDD {

@@ -59,7 +59,7 @@ class LRModel(spark: SparkSession) {
                   .rdd.map(row => row.getAs[Integer](0) -> (row.getAs[Integer](1), row.getAs[Vector](5)))
                   .groupByKey().map(m => {
                       val user_id = m._1.toLong
-                      val top40 = m._2.toArray.sortBy(-_._2(0)).take(40).map(_._1.toLong).mkString(",")
+                      val top40 = m._2.toArray.sortBy(-_._2(0)).take(40).map(_._1.toLong)
                       (user_id, top40)
                     })
     import spark.implicits._

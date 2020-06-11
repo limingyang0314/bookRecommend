@@ -14,7 +14,7 @@ object Rank {
 
     val spark = SparkSession.builder()
       //.master("yarn-cluster")
-      .master("local[*]")
+      .master("local")
       .enableHiveSupport()
       .getOrCreate()
 
@@ -28,6 +28,7 @@ object Rank {
 
     val data = lr.getRank(lrModel)
 
-    // modelUtil.saveResult(data)
+    modelUtil.saveResult(data)
+
   }
 }

@@ -2,18 +2,20 @@ package com.example.utils
 
 import java.util
 
-import com.example.model.FTRL
 import org.apache.spark.sql.functions._
 import com.example.model.EventModel
+import org.apache.spark.SparkContext
 import org.apache.spark.ml.classification.{LogisticRegression, LogisticRegressionModel}
 import org.apache.spark.ml.feature.VectorAssembler
 import org.apache.spark.ml.linalg.Vectors
 import org.apache.spark.sql.{DataFrame, DataFrameReader, Dataset, Row, SparkSession}
 
 import scala.collection.mutable
-import scala.collection.mutable.ArrayBuffer
 
-class ModelUtil(spark: SparkSession) extends Serializable {
+case class UserBehaviorDO(uuid: String, user_id: Long, book_id: Long, tagIds: String, action: String, year: Int, month: Int, day: Int, hour: Int)
+
+
+class ModelUtil(spark: SparkSession, sparkContext: SparkContext) extends Serializable {
 
   def getJdbcDF: DataFrameReader ={
     spark.read.format("jdbc")
@@ -24,21 +26,39 @@ class ModelUtil(spark: SparkSession) extends Serializable {
   }
 
   def saveAction(list: util.List[EventModel]): Unit = {
-    val value = ArrayBuffer[(String, Long, Long, String, String, Int, Int, Int, Int)]()
+    var value = List[UserBehaviorDO]()
     for (i <- 0 until list.size()) {
       val x = list.get(i)
-      value += ((x.getUuid, x.getUserId.toLong, x.getBookId.toLong, x.getTagIds, x.getAction, x.getYear.intValue(), x.getMonth.intValue(), x.getDay.intValue(), x.getHour.intValue()))
+      value = value :+ UserBehaviorDO(
+        x.getUuid,
+        x.getUserId.toLong,
+        x.getBookId.toLong,
+        x.getTagIds,
+        x.getAction,
+        x.getYear.toInt,
+        x.getMonth.toInt,
+        x.getDay.toInt,
+        x.getHour.toInt
+      )
     }
 
     value.foreach(println)
 
     import spark.implicits._
-    val data = value.toDF("uuid", "user_id", "book_id", "tagIds", "action", "year", "month", "day", "hour")
+    println(spark)
+    println(sparkContext)
 
-    data.show()
-//    recommendUser(data)
-//
-//    data.write.mode("append").insertInto("online_action")
+    if (sparkContext != null) {
+      val rdd = sparkContext.makeRDD(value)
+
+      val data = rdd.toDF("uuid", "user_id", "book_id", "tagIds", "action", "year", "month", "day", "hour")
+
+      data.show()
+    }
+
+
+//  recommendUser(data)
+//  data.write.mode("append").insertInto("online_action")
   }
 
   def writeToDB(res: DataFrame): Unit = {
@@ -66,17 +86,17 @@ class ModelUtil(spark: SparkSession) extends Serializable {
   def lrRank(list: DataFrame): DataFrame = {
     val modelPath = "/model/lr/lr.obj"
     val lrModel = LogisticRegressionModel.load(modelPath)
-    val ftrl = FTRL(lrModel.coefficientMatrix.toArray)
-
+//    val ftrl = FTRL(lrModel.coefficientMatrix.toArray)
+//
     val recall = getVectorFeature(list)
-    var count = -1
-    val fitData = recall.select("features").rdd
-        .map(row => {
-          count += 1
-          (count, Vectors.dense(row.getAs[Seq[Double]](0).toArray))
-        })
-
-    ftrl.fit(fitData, 1)
+//    var count = -1
+//    val fitData = recall.select("features").rdd
+//        .map(row => {
+//          count += 1
+//          (count, Vectors.dense(row.getAs[Seq[Double]](0).toArray))
+//        })
+//
+//    ftrl.fit(fitData, 1)
 
     
     lrModel.transform(recall)
@@ -117,5 +137,5 @@ class ModelUtil(spark: SparkSession) extends Serializable {
 }
 
 object ModelUtil {
-  def apply(spark: SparkSession): ModelUtil = new ModelUtil(spark)
+  def apply(spark: SparkSession, sparkContext: SparkContext): ModelUtil = new ModelUtil(spark, sparkContext)
 }
